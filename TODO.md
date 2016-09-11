@@ -1,10 +1,10 @@
 Short term:
 
-1. Add the program and module files
-   a. Check that they work!
-2. make a gallery of example renders
-3. write readme - how to use 
-4. comment the modules regarding implementation details
+1. Add the program and module files.
+2. Check that they work!
+3. make a gallery of example renders
+4. write readme - how to use 
+5. comment the modules regarding implementation details
 
 Long term:
 
