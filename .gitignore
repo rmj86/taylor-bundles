@@ -1,0 +1,5 @@
+# bytecode
+**/*.pyc
+
+# rendered images
+**/*.png
