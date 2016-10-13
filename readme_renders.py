@@ -10,7 +10,7 @@ c = curve.Curve(x, f)
 tb1 = taylorbundle.TaylorBundle( curve = c )
 
 def fig1():
-    tb1.set_options( filename = "readme_fig1_4tan"
+    tb1.set_options( filename = "readme_fig1"
                    , n_tan = 4
                    , window = [0, 16, -4.5, 4.5]
                    , domain = [0,18]
@@ -25,7 +25,7 @@ def fig1():
 def fig2():
     wx = 8*pi
     wy = wx * 9./32
-    tb1.set_options( filename = "readme_fig2_400tan"
+    tb1.set_options( filename = "readme_fig2"
                    , n_tan = 400
                    , window = [0, wx, -wy, wy]
                    , domain = [0,8*pi]
@@ -40,7 +40,7 @@ def fig2():
 def fig3():
     wx = 8*pi
     wy = wx * 9./32
-    tb1.set_options( filename = "readme_fig3_20000tan"
+    tb1.set_options( filename = "readme_fig3"
                    , n_tan = 1000
                    , n_part = 20
                    , window = [0, wx, -wy, wy]
