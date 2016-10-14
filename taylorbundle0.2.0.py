@@ -14,25 +14,25 @@ tau = 2 * numpy.pi
                 
 class TaylorBundle:
     curve = None
-    n_part = 1    # number of partial images to render
-    n_tan = 2500    # number of tangents per partial image
-    degree = 1    # polynomial degree of tangents
-    domain = (0, tau)   # domain of curve and tangent space
-    figsize = (16,9)    # size of image (in inches)
-    dpi = 120    # dpi of image
-    window = [0, tau, -2, 2]    # bounds of the plotting surface
-    facecolor = 'k'   # background colour of plotting surface
+    n_part = 1               # number of partial images to render
+    n_tan = 2500             # number of tangents per partial image
+    degree = 1               # polynomial degree of tangents
+    domain = (0, tau)        # domain of curve and tangent space
+    figsize = (16,9)         # size of image (in inches)
+    dpi = 120                # dpi of image
+    window = [0, tau, -2, 2] # bounds of the plotting surface
+    facecolor = 'k'          # background colour of plotting surface
     showcurve = True  # show the generating curve on top of the tangent bundle
-    curveres = 256    # resolution of generating curve
-    curvecol = "w"    # colour of generating curve
-    curvelw = 2    # line width of gnerating curve
-    curvealpha = 1.0    # transparency of generating curve
-    tanlen = 2    # +-length of (domain of) tangent curves
-    tanres = 256    # resolution of tangent curves
+    curveres = 256           # resolution of generating curve
+    curvecol = "w"           # colour of generating curve
+    curvelw = 2              # line width of generating curve
+    curvealpha = 1.0         # transparency of generating curve
+    tanlen = 2               # +-length of (domain of) tangent curves
+    tanres = 256             # resolution of tangent curves
     tancol = "r"  # colour of tangents. Can be constant or generating function
-    tanlw = 0.2    # line width of tangents
-    tanalpha = 0.2    # tranparency of tangents
-    filename = None    # file name to save to. Defaults to date and time
+    tanlw = 0.2              # line width of tangents
+    tanalpha = 0.2           # tranparency of tangents
+    filename = None          # file name to save to. Defaults to date and time
     keep_partials = False    # keep partial files after render finishes
     def __init__(self, **options):
         self.set_options(**options)
@@ -72,10 +72,14 @@ class TaylorBundle:
             
     def drawCurve(self):
         tmin, tmax = self.domain
-        curve, curveres = self.curve, self.curveres
-        curvecol, curvelw = self.curvecol, self.curvelw
-        t = numpy.linspace(tmin, tmax, curveres)
-        pyplot.plot(curve.x(t), curve.y(t), color=curvecol, lw=curvelw, alpha=curvealpha)
+        t = numpy.linspace(tmin, tmax, self.curveres)
+        pyplot.plot(
+              self.curve.x(t)
+            , self.curve.y(t)
+            , color = self.curvecol
+            , lw = self.curvelw
+            , alpha = self.curvealpha
+            )
 
     @misc.timed(False)
     def render(self, preview=False, scale=0.25):
