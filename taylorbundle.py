@@ -1,4 +1,23 @@
 # -*- coding: utf-8 -*-
+"""
+Taylor Bundles
+
+Usage:
+see "examples" files
+
+Controling image saturation:
+The color intensity / saturation of the image is proportional to tan_lw, tan_alpha, and n_tan, and inversely proportional to the linear size of the redered image. Keeping n_tan*tallw*tanalpha constant keeps the intensity constant at a given resolution. For full-HD res, good options are 
+n_tan = 2500
+tanlw = 0.4
+tanalpha = 0.1
+
+Parts:
+Too keep memory usage down, we can't render too many curves all at once. Therefore it's useful to split the curves between several separate partial renderings and compose the images after. n_part is the number of partial renders, and n_tan is the number of curves in each part. The final uotput is made up of n_part*n_tan curves. Good options for a perfectly smooth, "continuous-looking" result are
+n_tan = 2500
+n_part = 16
+
+@author rmj86
+"""
 
 import numpy
 import matplotlib
@@ -11,7 +30,7 @@ import curve
 import types
 
 tau = 2 * numpy.pi
-                
+
 class TaylorBundle:
     curve = None
     n_part = 1               # number of partial images to render
