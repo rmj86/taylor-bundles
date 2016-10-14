@@ -1,4 +1,6 @@
-# Example render of Taylor bundle. Pentagram-like
+# Example render of Taylor bundle. 5-sided "squished circle" generating
+# curve (hypotrochoid). Pentagram-like TB. A4 figure size. Can be used as
+# a tasteful watermark on paper.
 
 import curve
 import taylorbundle
@@ -9,8 +11,8 @@ tau = 2 * pi
 
 def main():
     c = curve.Trochoid(-5, r= 14./240)
-    color1 = (1, 0.2, 0.2)
-    color2 = (0.4, 0.0, 0.2)
+    color1 = (1, 0.2, 0.1)
+    color2 = (0.2, 0.0, 0.0)
     color_f = colormix.cosine2(color1, color2, 0, tau/10)
     tb = taylorbundle.TaylorBundle(
           curve = c
@@ -21,7 +23,6 @@ def main():
         , facecolor = 'w'
         , tancol = color_f
         , tanlen = 24
-        , n_part = 1
         , filename = "renders/example_star"
         )
 
