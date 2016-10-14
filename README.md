@@ -9,20 +9,20 @@ Given a function f(x), a tangent line to the graph of x, in the point <a,f(a)>, 
 
 Here's a picture of a few tangent lines to y = sin(x)
 
-![Figure 1](readme_fig1.png)
+![Figure 1](figures/readme_fig1.png)
 
 
 #### Tangent Bundle
 
 By drawing multiple tangents at once, we can see that they form a pattern.  Here is sin(x) with 400 tangents equally spaced in the range 0<x<8pi.  They form a square lattice.  It's easy to see why; around the points where sin(x) is small, we also have that sin''(x) is small.  I.e. the rate of change of the tangent slope is small. Therefore they will "bunch up" more around those points.
 
-![Figure 2](readme_fig2.png)
+![Figure 2](figures/readme_fig2.png)
 
 From this, we can intuit the concept of a _**tangent bundle:** all the tangents to a curve, in a given range, taken together._ We can also intuit that the tangent bundle has the property of _**tangent density:** how much tangent there is around a point in the plane,_ indicated in the picture by how bright it is.
 
 We can expect the tangent density to be continuous around every (or most) points in the plane.  By drawin very many tangents so fine that the individual lines are indistinguishable, we get an idea of what this looks like. Here is the same bundle as above, this time represented with 40,000 tangent lines.
 
-![Figure 3](readme_fig3.png)
+![Figure 3](figures/readme_fig3.png)
 
 Caveat: If we want to look at the bundle as a property of _the curve_ rather than a property of _the function_, the curve should be reparametrized with respect to arc length; The points where we draw the tangent lines should be chosen equally spaced along the curve rather than equally spaced in the parameter. However this is currently not implemented in the program, and the distinction will be glossed over for the rest of this text.
 
