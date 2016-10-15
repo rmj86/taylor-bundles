@@ -28,6 +28,8 @@ import image
 import colormix
 import curve
 import types
+from matplotlib.collections import LineCollection
+from matplotlib.colors import colorConverter
 
 tau = 2 * numpy.pi
 
@@ -74,22 +76,36 @@ class TaylorBundle:
         ax.axis("off")
     #@timed(showargs=False)
     def drawTangents(self, tmin, tmax, n_tan):
-        # make static color into constant function
-        if type(self.tancol) != types.FunctionType:
-            tancol = colormix.constant(self.tancol)
-        else: tancol = self.tancol
+        # function paramter values
+        ts_ = numpy.linspace(tmin, tmax, n_tan, False)
+        ts = misc.permute(ts_)
+        # color array
+        if type(self.tancol) == types.FunctionType:
+            colors = self.tancol(ts)
+        else:
+            c_arr = colorConverter.to_rgba_array(self.tancol)
+            colors = numpy.full((n_tan, 4), c_arr)
         # plot the tangents on current axis
-        ts = numpy.linspace(tmin, tmax, n_tan, False)
-        for t in misc.permute(ts):
+        for t, c in zip(ts, colors):
             p = self.curve.taylorCurve(t, self.degree)
             s = numpy.linspace(t - self.tanlen, t + self.tanlen, self.tanres)
-            pyplot.plot( p.x(s), p.y(s), color=tancol(t)
+            pyplot.plot( p.x(s), p.y(s), color=c
                        , linewidth=self.tanlw, alpha=self.tanalpha)
         # plot the curve
         if self.showcurve:
             self.drawCurve()
             
     def drawCurve(self):
+        # print "drawing"
+        # return
+        # print repr(self._drawCurve_constcolor)
+        if type(self.curvecol) == types.FunctionType:
+            self._drawCurve_varColor()
+        else:
+            self._drawCurve_constColor()
+        
+    def _drawCurve_constColor(self):
+        # pass
         tmin, tmax = self.domain
         t = numpy.linspace(tmin, tmax, self.curveres)
         pyplot.plot(
@@ -99,6 +115,23 @@ class TaylorBundle:
             , lw = self.curvelw
             , alpha = self.curvealpha
             )
+    def _drawCurve_varColor(self):
+        tmin, tmax = self.domain
+        t = numpy.linspace(tmin, tmax, self.curveres)
+        x = self.curve.x(t)
+        y = self.curve.y(t)
+        coords = numpy.ndarray((self.curveres-1, 2, 2))
+        coords[:,0,0] = x[:-1]
+        coords[:,1,0] = x[1:]
+        coords[:,0,1] = y[:-1]
+        coords[:,1,1] = y[1:]
+        colors = self.curvecol(t)
+        # print colors
+        segments = LineCollection( coords
+                                 , colors = colors[:-1]
+                                 , lw = self.curvelw )
+        ax = pyplot.gca()
+        ax.add_collection(segments)
 
     @misc.timed(False)
     def render(self, preview=False, scale=0.25):
