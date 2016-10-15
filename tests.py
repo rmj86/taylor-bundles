@@ -86,25 +86,24 @@ def tb_curveColorConst():
         , window = [-4,4,-2.25,2.25]
         )
     bundle.render()
+    return True
 
 
 ## draw variable color curve
 def tb_curveColorVar():
     cm = colormix.cosine2((1,0,0),(0,1,0),0,tb.tau/10)
     t = numpy.linspace(0,1,3)
-    print t
-    print cm(t)
-    # print cm(1)
     bundle = tb.TaylorBundle(
           filename = "test/tb_curveColorVar"
         , curve = curve.Trochoid(-5, 0.6, 0)
         , curvelw = 10
-        , curvecol = colormix.cosine2((1,0,0),(0,1,0),0,tb.tau/10)
+        , curvecol = colormix.cosine2((1,0,0),(0,1,0),0,tb.tau/10, linear=True)
         , n_tan = 1
         , dpi = 30
         , window = [-4,4,-2.25,2.25]
         )
-    # bundle.render()
+    bundle.render()
+    return True
 
 
 
@@ -113,10 +112,6 @@ def tb_curveColorVar():
 
 ## test having 0 n_tans
 ## TODO
-
-def renderTests():
-    tb_curveColorConst()
-    tb_curveColorVar()
 
 def runtest(f, v=3):
     """ run test function. *f* should take no arguments and returns a Bool.
@@ -157,6 +152,13 @@ def cm_tests(v=3):
            , v = v
            )
 
+def renderTests(v=3):
+    testAll( [ tb_curveColorConst
+             , tb_curveColorVar
+             ]
+           , v = v
+           )
+
 if __name__ == "__main__":
     v = 3
     if len(sys.argv) >= 2:
@@ -176,5 +178,5 @@ if __name__ == "__main__":
         else:
             v = n
     
-    # renderTests()
+    renderTests()
     cm_tests(v=v)
