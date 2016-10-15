@@ -5,8 +5,9 @@ Short term:
 3. Make a gallery of example renders
 4. Write readme - how to use 
 5. Comment the modules regarding implementation details
-6. Add: ability to render multi-coloured generating curve
+6. ~~Add: ability to render multi-coloured generating curve~~
 7. Add: distinct domains for the curve and it's bundle
+8. ~~colormix should work on numpy arrays~~
 
 
 Long term:
