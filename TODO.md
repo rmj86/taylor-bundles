@@ -8,7 +8,10 @@ Short term:
 6. ~~Add: ability to render multi-coloured generating curve~~
 7. Add: distinct domains for the curve and it's bundle
 8. ~~colormix should work on numpy arrays~~
-
+9. remove the _alpha_ TB option - alpha should be passed as part of the color argument (rgba)
+10. renderer should issue a WARNING when it is passed an invalid option.
+11. renderer should take verbosity argument - for printing render times, file saves, etc.
+12. __curve__ mnodule should have a _Function_ class which take an argument f(x) and returns a Curve(x, f(x))
 
 Long term:
 
