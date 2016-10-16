@@ -8,6 +8,8 @@ import colormix
 import numpy
 
 
+###############################################################################
+## Color mixer test cases.
 
 ## colormix - can take rgb tuple as color value
 def cm_cos2_3tupleCol():
@@ -73,6 +75,11 @@ def cm_cos2_arrParamLinear():
     b = (t == t2).all()
     return b
 
+###############################################################################
+##  Renderer Tests: These will signal success as long as the renderer doesn't
+##  crash. The correctness of the resulting image must be inspectedf manually.
+##  The image file should be given a name hinting at whant the image should
+##  look like.
 
 ## draw const color curve
 def tb_curveColorConst():
@@ -81,13 +88,13 @@ def tb_curveColorConst():
         , curve = curve.Trochoid(-5, 0.6, 0)
         , curvelw = 10
         , curvecol = 'w'
+        , showCurve = True
         , n_tan = 1
         , dpi = 30
         , window = [-4,4,-2.25,2.25]
         )
     bundle.render()
     return True
-
 
 ## draw variable color curve
 def tb_curveColorVar():
@@ -97,21 +104,60 @@ def tb_curveColorVar():
           filename = "test/tb_curveColorVar"
         , curve = curve.Trochoid(-5, 0.6, 0)
         , curvelw = 10
+        , curveres = 128
         , curvecol = colormix.cosine2((1,0,0),(0,1,0),0,tb.tau/10, linear=True)
+        , showCurve = True
         , n_tan = 1
+        , tanalpha = 0
         , dpi = 30
         , window = [-4,4,-2.25,2.25]
         )
     bundle.render()
     return True
 
+# draw nothing, neither curve nor any tangents!
+def tb_blankImage():
+    cm = colormix.cosine2((1,0,0),(0,1,0),0,tb.tau/10)
+    t = numpy.linspace(0,1,3)
+    bundle = tb.TaylorBundle(
+          filename = "test/tb_blankImage"
+        , curve = curve.Trochoid(-5, 0.6, 0)
+        , showcurve = False
+        , curvelw = 10
+        , n_tan = 0
+        , tanlw = 10
+        , tanalpha = 1
+        , dpi = 30
+        , window = [-4,4,-2.25,2.25]
+        )
+    bundle.render()
+    return True
+
+## draw tangents in half the domain only
+def tb_tangentsOnTheLeft():
+    t = numpy.linspace(0,1,3)
+    bundle = tb.TaylorBundle(
+          filename = "test/tb_tangentsOnTheLeft"
+        , curve = curve.Curve(lambda x: x, numpy.sin)
+        , curvelw = 10
+        , curvecol = 'w'
+        , curvedomain = [-8,8]
+        , n_tan = 100
+        , tanlw = 2
+        , tanalpha = 1
+        , tancol = 'r'
+        , bundledomain = [-8,0]
+        , dpi = 30
+        , window = [-8,8,-4.5,4.5]
+        )
+    bundle.render()
+    return True
+
+# TODO: what happens when n_parts is 0?
 
 
-## test different curve- and bundle domains
-## TODO
-
-## test having 0 n_tans
-## TODO
+###############################################################################
+## test running infrastructure 
 
 def runtest(f, v=3):
     """ run test function. *f* should take no arguments and returns a Bool.
@@ -152,9 +198,11 @@ def cm_tests(v=3):
            , v = v
            )
 
-def renderTests(v=3):
+def render_tests(v=3):
     testAll( [ tb_curveColorConst
              , tb_curveColorVar
+             , tb_blankImage
+             , tb_tangentsOnTheLeft
              ]
            , v = v
            )
@@ -178,5 +226,5 @@ if __name__ == "__main__":
         else:
             v = n
     
-    renderTests()
+    render_tests(v=v)
     cm_tests(v=v)
