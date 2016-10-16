@@ -151,11 +151,13 @@ class TaylorBundle:
         # set up the ploting surface
         fig = self.initializeFigure(figsize)
         # render partials
-        dt = (tmax-tmin)/n_tan
+        # --------
+        # div by zero quick fix: set dt to an arbitrary value if zero n_tan
+        if n_tan == 0: dt = 1
+        else: dt = (tmax-tmin)/n_tan 
         ds = numpy.linspace(tmin, tmin+dt, n_part, False)
-        indexes = range(n_part)
         partial_filenames = []
-        for i, d in zip(indexes, ds):
+        for i, d in enumerate(ds):
             self.initializeAxes()  # clear the current axes
             self.drawTangents(tmin+d, tmax+d, n_tan)
             pfname = "{}_partial{}.png".format(filename, i)
