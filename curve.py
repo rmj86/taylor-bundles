@@ -49,7 +49,15 @@ class Curve:
         px = taylorExpansion(self.x, a, d)
         py = taylorExpansion(self.y, a, d)
         return Curve(px, py)
-    
+
+def fromFunction(f):
+    """takes a function  f  and returns a Curve object representing
+       the curve  <t, f(t)>"""
+    x = lambda t: t
+    y = lambda t: f(t)
+    c = Curve(x, y)
+    return c
+
 # the derivatives of sin; cyclic
 sinprime = [sin, cos, lambda x: -sin(x), lambda x: -cos(x)]
 # The derivatives of cos; cyclic
