@@ -1,5 +1,9 @@
-# bytecode
+# Python bytecode
 **/*.pyc
 
 # rendered images
 **/*.png
+!figures/*.png
+
+# Windows shortcuts
+*.lnk
