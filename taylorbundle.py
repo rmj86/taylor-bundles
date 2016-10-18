@@ -39,6 +39,8 @@ class TaylorBundle:
     n_tan = 2500             # number of tangents per partial image
     degree = 1               # polynomial degree of tangents
     domain = (0, tau)        # domain of curve and tangent space
+    curvedomain = (0, tau)   # domain of generating curve
+    bundledomain = (0, tau)  # domain of tangent bundle
     figsize = (16,9)         # size of image (in inches)
     dpi = 120                # dpi of image
     window = [0, tau, -2, 2] # bounds of the plotting surface
@@ -59,6 +61,9 @@ class TaylorBundle:
         self.set_options(**options)
     def set_options(self, **options):
         for o,v in options.items():
+            if o == "domain":
+                setattr(self, "curvedomain", v)
+                setattr(self, "bundledomain", v)
             setattr(self, o, v)
     def initializeFigure(self, figsize):
         """ initialize the plotting surface """ 
@@ -106,7 +111,7 @@ class TaylorBundle:
         
     def _drawCurve_constColor(self):
         # pass
-        tmin, tmax = self.domain
+        tmin, tmax = self.curvedomain
         t = numpy.linspace(tmin, tmax, self.curveres)
         pyplot.plot(
               self.curve.x(t)
@@ -116,7 +121,7 @@ class TaylorBundle:
             , alpha = self.curvealpha
             )
     def _drawCurve_varColor(self):
-        tmin, tmax = self.domain
+        tmin, tmax = self.curvedomain
         t = numpy.linspace(tmin, tmax, self.curveres)
         x = self.curve.x(t)
         y = self.curve.y(t)
@@ -137,7 +142,7 @@ class TaylorBundle:
     def render(self, preview=False, scale=0.25):
         filename, figsize = self.filename, self.figsize,
         n_part, n_tan = self.n_part, self.n_tan
-        tmin, tmax = self.domain
+        tmin, tmax = self.bundledomain
         # initialize filename
         if not type(filename) == str:
             filename = misc.generate_filename()
@@ -154,8 +159,8 @@ class TaylorBundle:
         # --------
         # div by zero quick fix: set dt to an arbitrary value if zero n_tan
         if n_tan == 0: dt = 1
-        else: dt = (tmax-tmin)/n_tan 
-        ds = numpy.linspace(tmin, tmin+dt, n_part, False)
+        else: dt = float(tmax-tmin)/n_tan
+        ds = numpy.linspace(0, dt, n_part, False)
         partial_filenames = []
         for i, d in enumerate(ds):
             self.initializeAxes()  # clear the current axes

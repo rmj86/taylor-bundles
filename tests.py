@@ -141,17 +141,40 @@ def tb_tangentsOnTheLeft():
         , curve = curve.Curve(lambda x: x, numpy.sin)
         , curvelw = 10
         , curvecol = 'w'
-        , curvedomain = [-8,8]
+        , curvedomain = [-7,7]
         , n_tan = 100
         , tanlw = 2
         , tanalpha = 1
         , tancol = 'r'
-        , bundledomain = [-8,0]
+        , bundledomain = [-7,0]
         , dpi = 30
         , window = [-8,8,-4.5,4.5]
         )
     bundle.render()
     return True
+# draw tagents in full domain - test is to make sure that setting *domain*
+# overrides *curvedomain* and *bundledomain*
+def tb_curveAndTangentInFullDomain():
+    t = numpy.linspace(0,1,3)
+    bundle = tb.TaylorBundle(
+          filename = "test/tb_curveAndTangentInFullDomain"
+        , curve = curve.Curve(lambda x: x, numpy.sin)
+        , curvelw = 10
+        , curvecol = 'w'
+        , curvedomain = [-7,-4]
+        , n_tan = 100
+        , tanlw = 2
+        , tanalpha = 1
+        , tancol = 'r'
+        , bundledomain = [4,7]
+        , dpi = 30
+        , window = [-8,8,-4.5,4.5]
+        )
+    bundle.set_options(domain = [-8,8])
+    bundle.render()
+    return True
+
+
 
 # TODO: what happens when n_parts is 0?
 
@@ -203,6 +226,7 @@ def render_tests(v=3):
              , tb_curveColorVar
              , tb_blankImage
              , tb_tangentsOnTheLeft
+             , tb_curveAndTangentInFullDomain
              ]
            , v = v
            )
