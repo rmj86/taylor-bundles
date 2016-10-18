@@ -88,7 +88,7 @@ def tb_curveColorConst():
         , curve = curve.Trochoid(-5, 0.6, 0)
         , curvelw = 10
         , curvecol = 'w'
-        , showCurve = True
+        , showcurve = True
         , n_tan = 1
         , dpi = 30
         , window = [-4,4,-2.25,2.25]
@@ -106,7 +106,7 @@ def tb_curveColorVar():
         , curvelw = 10
         , curveres = 128
         , curvecol = colormix.cosine2((1,0,0),(0,1,0),0,tb.tau/10, linear=True)
-        , showCurve = True
+        , showcurve = True
         , n_tan = 1
         , tanalpha = 0
         , dpi = 30

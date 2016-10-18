@@ -6,7 +6,7 @@ Usage:
 see "examples" files
 
 Controling image saturation:
-The color intensity / saturation of the image is proportional to tan_lw, tan_alpha, and n_tan, and inversely proportional to the linear size of the redered image. Keeping n_tan*tallw*tanalpha constant keeps the intensity constant at a given resolution. For full-HD res, good options are 
+The color intensity / saturation of the image is proportional to tan_lw, tan_alpha, and n_tan, and inversely proportional to the linear size of the redered image. Keeping n_tan*tallw*tanalpha constant keeps the intensity constant at a given resolution. For full-HD res, good options are
 n_tan = 2500
 tanlw = 0.4
 tanalpha = 0.1
@@ -34,6 +34,13 @@ from matplotlib.colors import colorConverter
 tau = 2 * numpy.pi
 
 class TaylorBundle:
+    __opts = { "curve", "n_part", "n_tan", "degree"
+             , "domain", "curvedomain", "bundledomain"
+             , "figsize", "dpi", "window", "facecolor"
+             , "showcurve", "curveres", "curvecol", "curvelw"
+             , "curvealpha", "tanlen", "tanres", "tancol"
+             , "tanlw", "tanalpha", "filename", "keep_partials"
+             }
     curve = None
     n_part = 1               # number of partial images to render
     n_tan = 2500             # number of tangents per partial image
@@ -61,12 +68,14 @@ class TaylorBundle:
         self.set_options(**options)
     def set_options(self, **options):
         for o,v in options.items():
+            if o not in self.__opts:
+                print "WARNING: Unknown option {}".format(o)
             if o == "domain":
                 setattr(self, "curvedomain", v)
                 setattr(self, "bundledomain", v)
             setattr(self, o, v)
     def initializeFigure(self, figsize):
-        """ initialize the plotting surface """ 
+        """ initialize the plotting surface """
         fig = pyplot.gcf()
         fig.set_size_inches(*figsize)
         fig.set_dpi(self.dpi)
@@ -99,7 +108,7 @@ class TaylorBundle:
         # plot the curve
         if self.showcurve:
             self.drawCurve()
-            
+
     def drawCurve(self):
         # print "drawing"
         # return
@@ -108,7 +117,7 @@ class TaylorBundle:
             self._drawCurve_varColor()
         else:
             self._drawCurve_constColor()
-        
+
     def _drawCurve_constColor(self):
         # pass
         tmin, tmax = self.curvedomain
@@ -152,7 +161,7 @@ class TaylorBundle:
             figsize = (scale * figsize[0], scale * figsize[1])
             n_tan = int(scale * n_tan)
             filename = "{}_preview{}".format(filename, scale)
-        
+
         # set up the ploting surface
         fig = self.initializeFigure(figsize)
         # render partials
