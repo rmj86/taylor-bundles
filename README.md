@@ -5,7 +5,7 @@ Script for rendering Taylor Bundles
 
 #### Tangent Line
 
-Given a function f(x), a tangent line to the graph of x, in the point <a,f(a)>, is a linear function p(x) such that f(a)=p(a) and f'(a)=p'(a). I.e. the value of the functions are equal, and the value of the first derivatives are equal. p(x) is unique for any a.
+Given a function f(x), a tangent line to the graph of x, in the point (a, f(a)), is a linear function p(x) such that f(a)=p(a) and f'(a)=p'(a). I.e. the value of the functions are equal, and the value of the first derivatives are equal. p(x) is unique for any a.
 
 Here's a picture of the tangent line to y = sin(x), x=1
 
@@ -32,10 +32,15 @@ Another thing beyond the scope of the project is to give a formal definition of 
 #### Taylor Polynomials
 
 The concept of a taylor polynomial can be seen as an extension of the concept of a tangent line. Given a function f(x), the n'th degree Taylor polynomial of f around the point <a, f(a)> is an n'th degree polynomial p(x) such that
+
 p(a) = f(a)
+
 p'(a) = f(a)
+
 p''(a) = f''(a)
+
 ...
+
 p^(n)(a) = f^(n)(a)   <-- n'th derivative equal
 
 Again p is unique for any given a. Here's a picture of the 2nd degree Taylor polynomial for y=sin(x), x=1:
@@ -52,13 +57,15 @@ Again we can see a pattern, intuit the concept of an **n'th degree Taylor bundle
 
 #### Parametric Curves
 
-Given a parametric curve c(t) = <x(t),y(t)>, the concepts are extended as such: The n'th degree Taylor polynomial around a point c(a) is <p(t),q(t)> where p(t) is the n'th degree taylor polynomial around x(a), and q(t) is the n'th degree taylor polynomial around y(a)
+Given a parametric curve c(t) = (x(t), y(t)), the concepts are extended as such: The n'th degree Taylor polynomial around a point c(a) is (p(t), q(t)) where p(t) is the n'th degree taylor polynomial around x(a), and q(t) is the n'th degree taylor polynomial around y(a).
 
 Here is an example of what a Taylor bundle around a parametric curve (a hypotrochoid) can look like.
 
 PICTURE HERE
 
-In this case, the Taylor curves are given colour based on the parameter a, where on the generating curve they originate.
+## Adding Colour
+
+PUT SOMETHING HERE
 
 ## Example Renders
 
