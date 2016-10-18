@@ -33,15 +33,11 @@ Another thing beyond the scope of the project is to give a formal definition of 
 
 The concept of a taylor polynomial can be seen as an extension of the concept of a tangent line. Given a function f(x), the n'th degree Taylor polynomial of f around the point <a, f(a)> is an n'th degree polynomial p(x) such that
 
-p(a) = f(a)
-
-p'(a) = f(a)
-
-p''(a) = f''(a)
-
-...
-
-p^(n)(a) = f^(n)(a)   <-- n'th derivative equal
+*  p(a) = f(a)
+*  p'(a) = f(a)
+*  p''(a) = f''(a)
+*  ...
+*  p^(n)(a) = f^(n)(a)   <-- n'th derivative equal
 
 Again p is unique for any given a. Here's a picture of the 2nd degree Taylor polynomial for y=sin(x), x=1:
 
