@@ -9,14 +9,14 @@ Short term:
 10. ~~renderer should issue a WARNING when it is passed an invalid option.~~
 4. Write readme - how to use 
     1. Index
-    2. Statement of purpose
+    2. ~~Statement of purpose~~
         * ~~explain tangent lines and bundles~~
         * ~~explain taylor polynomials and bundles~~
         * ~~extend to parametric curves~~
         * ~~illustrate adding color~~
-    3. How to install, dependencies
-    4. How to use:
-        * example files and renders
+    3. ~~How to install, dependencies~~
+    4. ~~How to use:~~
+        * ~~example files and renders~~
         * options
     4. Other modules
         * cuves, prdefined
@@ -34,5 +34,6 @@ Long term:
 1. Optimize rendering with pyplot.collections
 2. Make a RELEASE
 11. renderer should take verbosity argument - for printing render times, file saves, etc.
-3. Write extension for specification and renering of animations
+12. improved rendering of colored generating curve - get rid of gaps
+3. Write extension for specification and rendering of animations
 4. Make GUI

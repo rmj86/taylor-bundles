@@ -1,5 +1,10 @@
 # taylor-bundles
+
 Script for rendering Taylor Bundles
+
+## Index
+
+TODO
 
 ## What is a Taylor Bundle:
 
@@ -75,42 +80,54 @@ the bundle looks as such:
 
 ![Figure 9](figures/readme_fig9.png)
 
-## Example Renders
 
-Here is a portfolio with examples of images this Program can generate. For the interested, I will try to include the curve parameters in the description field.
+## Installation
 
-LINK TO DEVIANT ART ACCOUNT HERE
+There is currently no official release. To use the library in it's current state, just clone the repository / copy the source files into a folder. Make python find the modules either by updating pythons paths, or simply by saving and running your projects from the same folder.
 
-## Dependencies
+#### Dependencies
 
-this library depends on **numpy** and **matplotlib**. I don't know strictly which versions are requred. However, it is tested and works with numpy 1.9.3 and matplotlib 1.5.0rc3. It is also known to not work with numpy 1.6.2.
+This library depends on **numpy** and **matplotlib**. I don't know strictly which versions are requred. However, it is tested and works with numpy 1.9.3 and matplotlib 1.5.0rc3. It is known to not work at least one older version of matplotlib.
 
+
+##Usage
 
 ## Usage
 
-#### Examples 
+The minimum work required to get an image output is to instantiate a `TaylorBundle` object, give it a `curve` argument, and run the `render()` method. All other options have a default so that the renderer works, but rarely are they all ideal for a given render.
 
-See the files in this project named "example\_\*.py".
+The easiest way to get a valid curve object is the `fromFunction` function from the `curve` module.
 
-MAYBE INSERT EXAMPLE CODE HERE AND EXPLAIN
+#### Example Code
 
-OR MAYBE INSERT PROSAL COMMENTS IN THE SOURCE FILES
+Minimal definition:
 
-#### Options
+```
+from taylorbundle import TaylorBundle
+import curve
+import numpy
 
-EXPLAIN THE RENDERER OPTIONS HERE
-    give examples
-    explain the options
+tb = TaylorBundle( curve = curve.fromFunction(numpy.sin) )
+tb.render()
+```
 
-#### Predefined curves
+For more detailed examples, see the files `example_star.py`, `example_asteroid,py`. See the `renders/` and folder for their output. See `readme_renders.py` for how the figures in this readme were made.
 
-PUT SOMETHING HERE
+The following sections have complete information on `TayloBundle`'s options, on curves, and on how to use color.
 
-#### How to define your own curves
 
-PUT SOMETHING HERE
-    
-#### Color
+## Modules In Detail
 
-PUT SOMETHING HERE    
+TODO
 
+#### `taylorbundle.py`
+
+#### TaylorBundle Options
+
+#### `curve.py`
+
+#### Define Your Own Curves
+
+#### `colormix.py`
+
+#### Define Your Own Color Mixer
