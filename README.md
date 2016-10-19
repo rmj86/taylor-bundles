@@ -90,8 +90,6 @@ There is currently no official release. To use the library in it's current state
 This library depends on **numpy** and **matplotlib**. I don't know strictly which versions are requred. However, it is tested and works with numpy 1.9.3 and matplotlib 1.5.0rc3. It is known to not work at least one older version of matplotlib.
 
 
-##Usage
-
 ## Usage
 
 The minimum work required to get an image output is to instantiate a `TaylorBundle` object, give it a `curve` argument, and run the `render()` method. All other options have a default so that the renderer works, but rarely are they all ideal for a given render.
@@ -122,7 +120,69 @@ TODO
 
 #### `taylorbundle.py`
 
+`taylorbundle` exports two names. First, the class `TaylorBundle` which specifies and renders a Taylor bundle. Second, the circle constant `tau`, because numpy only exports `pi`, and who would want to use that?
+
+The options for a `TaylorBundle` can be set in three ways.
+
+1. Give them as an argument at object creation, e.g. `tb = TaylorBundle(option=value, ...)`.
+2. Set them via the `set_options` method. E.g. `tb.set_options(option=value, ...)`
+3. Modify the objet property directly, e.g. `tb.option = value`
+
+The third method is not recommended. Methods 1 and 2 will print a warning if you're trying to set an option that doesn't exist. Method 3 does not have this helpful debugging feature.
+
 #### TaylorBundle Options
+
+The options fall in 4 general categories.
+
+TODO more verbose descriptions
+
+###### Mathematical specification of the bundle
+
+option | Default Value | Description
+-------|---------------|------------
+curve        | None       | The generating curve for the bundle. 
+degree       | = 1        | The degree of the Taylor polynomials.
+bundledomain | = (0, tau) | The domain to render tangent polynomals in.
+curvedomain  | = (0, tau) | The domain to show `curve` in.
+domain       | = (0, tau) | The domain of both the curve and tangent space. Setting this option (with the setter) overwrites the values of `curvedomain` and `bundledomain`.
+
+###### Rendering of the generating curve
+
+option | Default Value | Description
+-------|---------------|------------
+showcurve  | True |  show the generating curve on top of the tangent bundle
+curveres   | 256  |  resolution of generating curve
+curvecol   | "w"  |  colour of generating curve
+curvelw    | 2    |  line width of generating curve
+curvealpha | 1.0  |  transparency of generating curve
+
+###### Rendering of the Taylor curves
+
+option | Default Value | Description
+-------|---------------|------------
+n_tan    | 2500 | number of tangents per partial image
+tanlen   | 2    | +-length of (domain of) tangent curves
+tanres   | 256  | resolution of tangent curves
+tanlw    | 0.2  | line width of tangents
+tanalpha | 0.2  | tranparency of tangents
+tancol   | "r"  | colour of tangents. Can be constant or generating function
+
+###### Rendering of the image
+
+option | Default Value | Description
+-------|---------------|------------
+n_part    | 1               | Number of partial images to render
+facecolor | 'k'             | Background colour of plotting surface
+window    | [0, tau, -2, 2] | Bounds of the plotting surface
+figsize   | (16,9)          | Size of image (in inches)
+dpi       | 120             | DPI of image
+
+Other
+
+option | Default Value | Description
+-------|---------------|------------
+filename      | None  | Name for the saved image file. If `none`, makes a file name based on current date and time.
+keep_partials | False | Keep partial files after render finishes
 
 #### `curve.py`
 
