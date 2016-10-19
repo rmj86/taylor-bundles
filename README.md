@@ -55,13 +55,25 @@ Again we can see a pattern, intuit the concept of an **n'th degree Taylor bundle
 
 Given a parametric curve c(t) = (x(t), y(t)), the concepts are extended as such: The n'th degree Taylor polynomial around a point c(a) is (p(t), q(t)) where p(t) is the n'th degree taylor polynomial around x(a), and q(t) is the n'th degree taylor polynomial around y(a).
 
-Here is an example of what a Taylor bundle around a parametric curve (a hypotrochoid) can look like.
+Here is an examplem of a parametric curve (a hypotrochoid) with a 4th degree Taylor polynomial curve in a point: 
 
-PICTURE HERE
+![Figure 6](figures/readme_fig6.png)
+
+And here is the corresponding 4th degree Taylor bundle for the domain 0<t<2pi:
+
+![Figure 7](figures/readme_fig7.png)
 
 ## Adding Colour
 
-PUT SOMETHING HERE
+Thus far the bundles have been rendred in monochrome and viewed as a whole. We can color code the tangent polynomials, and by that method see how much density they contribute to an area of the bundle according to their point of origin.
+
+For example, if we color them based on this scheme, where the polynomials originating on the "peaks" of the curve are yellow and the ones originating in the "valleys" are blue,
+
+![Figure 8](figures/readme_fig8.png)
+
+the bundle looks as such:
+
+![Figure 9](figures/readme_fig9.png)
 
 ## Example Renders
 

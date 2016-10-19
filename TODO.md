@@ -12,10 +12,10 @@ Short term:
     2. Statement of purpose
         * ~~explain tangent lines and bundles~~
         * ~~explain taylor polynomials and bundles~~
-        * extend to parametric curves
-        * illustrate adding color
-        * how to install, dependencies
-    3. How to use:
+        * ~~extend to parametric curves~~
+        * ~~illustrate adding color~~
+    3. How to install, dependencies
+    4. How to use:
         * example files and renders
         * options
     4. Other modules
