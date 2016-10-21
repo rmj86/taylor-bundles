@@ -191,7 +191,97 @@ def tb_curveAndTangentInFullDomain():
     bundle.set_options(domain = [-8,8])
     bundle.render()
     return True
-
+# draw tangents with variable alpha value - high when the sin is
+# increasing, and low when it's decreasing. 
+def tb_variableTanAlpha_highWhenIncreasing():
+    mix = colormix.cosine2([1,0,0,1], [1,0,0,0], 0, numpy.pi)
+    bundle = tb.TaylorBundle(
+          filename = "test/tb_variableTanAlpha_highWhenIncreasing"
+        , curve = curve.Curve(lambda x: x, numpy.sin)
+        , curvelw = 6
+        , curvecol = 'w'
+        , n_tan = 100
+        , tanlw = 2
+        # , tanlen = 30
+        , tanalpha = None
+        , tancol = mix
+        , domain = [-13, 13]
+        , dpi = 30
+        , window = [-16,16,-9,9]
+        )
+    bundle.render()
+    return True
+# draw curve with variable alpha value - high when the sin is
+# increasing, and low when it's decreasing.
+def tb_variableCurveAlpha_highWhenIncreasing():
+    mix = colormix.cosine2([1,1,1,1], [1,1,1,0], 0, numpy.pi)
+    bundle = tb.TaylorBundle(
+          filename = "test/tb_variableCurveAlpha_highWhenIncreasing"
+        , curve = curve.Curve(lambda x: x, numpy.sin)
+        , curvelw = 6
+        , curvecol = mix
+        , curvealpha = None
+        , n_tan = 100
+        , tanlw = 4
+        , tanalpha = 0.25
+        , domain = [-13, 13]
+        , dpi = 30
+        , window = [-16,16,-9,9]
+        )
+    bundle.render()
+    return True
+# tanalpha should ovveride alpha values in tancol arg (variable or not)
+def tb_blankImage2():
+    mix = colormix.cosine2([1,0,0,1], [1,0,0,0], 0, numpy.pi)
+    bundle = tb.TaylorBundle(
+          filename = "test/tb_blankImage2"
+        , curve = curve.Curve(lambda x: x, numpy.sin)
+        , showcurve = False
+        , n_tan = 100
+        , tancol = mix
+        , tanlw = 2
+        , tanlen = 30
+        , tanalpha = 0
+        , domain = [-13, 13]
+        , dpi = 30
+        , window = [-16,16,-9,9]
+        )
+    bundle.render()
+    return True
+# curvealpha should override alpha values in (constant) curvecol arg
+def tb_blankImage3():
+    bundle = tb.TaylorBundle(
+          filename = "test/tb_blankImage3"
+        , curve = curve.Curve(lambda x: x, numpy.sin)
+        , showcurve = True
+        , curvecol = "w"
+        , curvelw = 6
+        , curvealpha = 0
+        , n_tan = 0
+        , domain = [-13, 13]
+        , dpi = 30
+        , window = [-16,16,-9,9]
+        )
+    bundle.render()
+    return True
+# curveAlpha should override alpha values in (variable) curvecol arg
+def tb_blankImage4():
+    mix = colormix.cosine2([1,1,1,1], [1,1,1,0], 0, numpy.pi)
+    bundle = tb.TaylorBundle(
+          filename = "test/tb_blankImage4"
+        , curve = curve.Curve(lambda x: x, numpy.sin)
+        , showcurve = True
+        , curvecol = mix
+        , curvelw = 6
+        , curvealpha = 0
+        , n_tan = 0
+        , domain = [-13, 13]
+        , dpi = 30
+        , window = [-16,16,-9,9]
+        )
+    bundle.render()
+    return True
+    
 # draw a thick colored line - normal color mixing
 def cm_cos2_normalColorGradient():
     c = curve.fromFunction(lambda x: numpy.zeros(x.shape))
@@ -304,8 +394,13 @@ def render_tests(v=3):
     testAll( [ tb_curveColorConst
              , tb_curveColorVar
              , tb_blankImage
+             , tb_blankImage2
+             , tb_blankImage3
+             , tb_blankImage4
              , tb_tangentsOnTheLeft
              , tb_curveAndTangentInFullDomain
+             , tb_variableTanAlpha_highWhenIncreasing
+             , tb_variableCurveAlpha_highWhenIncreasing
              , cm_cos2_normalColorGradient
              , cm_cos2_linearColorGradient
              , cm_cos2_threeColorGradient
