@@ -16,7 +16,7 @@ tau = 2*pi
         # return color
     # return mix
 
-def color2ufunc(color):
+def fromConstant(color):
     if type(color) == FunctionType: # assume its valid and return unchanged
         return color
     else:  # it is a constant
@@ -35,8 +35,8 @@ def cosine2(color1, color2, u, v, linear=False):
         returns a numpy array with shape (n,4) - rgba."""
     period = 2*(v-u)
     const = tau/period
-    cfunc1 = color2ufunc(color1)
-    cfunc2 = color2ufunc(color2)
+    cfunc1 = fromConstant(color1)
+    cfunc2 = fromConstant(color2)
     def mix(t):
         m = 0.5 * (1 + cos((t-u) * (tau/period)))
         m = m[:, newaxis]

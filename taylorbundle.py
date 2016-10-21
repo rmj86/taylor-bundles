@@ -43,7 +43,7 @@ class TaylorBundle:
              }
     curve = None
     n_part = 1               # number of partial images to render
-    n_tan = 2500             # number of tangents per partial image
+    n_tan = 200              # number of tangents per partial image
     degree = 1               # polynomial degree of tangents
     domain = (0, tau)        # domain of curve and tangent space
     curvedomain = (0, tau)   # domain of generating curve
@@ -95,11 +95,8 @@ class TaylorBundle:
         t = numpy.linspace(tmin, tmax, n_tan, False)
         t = misc.permute(t)
         # color array
-        if type(self.tancol) == types.FunctionType:
-            colors = self.tancol(t)
-        else:
-            c_arr = colorConverter.to_rgba_array(self.tancol)
-            colors = numpy.full((n_tan, 4), c_arr)
+        cmix = colormix.fromConstant(self.tancol)
+        colors = cmix(t)
         # plot the tangents on current axis
         (amin, amax) = self.tandomain
         for a, c in zip(t, colors):
