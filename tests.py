@@ -129,8 +129,7 @@ def tb_curveColorVar():
         , curveres = 128
         , curvecol = cm
         , showcurve = True
-        , n_tan = 1
-        , tanalpha = 0
+        , n_tan = 0
         , dpi = 30
         , window = [-4,4,-2.25,2.25]
         )
@@ -202,7 +201,6 @@ def tb_variableTanAlpha_highWhenIncreasing():
         , curvecol = 'w'
         , n_tan = 100
         , tanlw = 2
-        # , tanlen = 30
         , tanalpha = None
         , tancol = mix
         , domain = [-13, 13]
@@ -240,7 +238,7 @@ def tb_blankImage2():
         , n_tan = 100
         , tancol = mix
         , tanlw = 2
-        , tanlen = 30
+        , tandomain = [-30, 30]
         , tanalpha = 0
         , domain = [-13, 13]
         , dpi = 30
@@ -291,7 +289,7 @@ def cm_cos2_normalColorGradient():
         , curve = c
         , curvecol = mix
         , showcurve = True
-        , curvelw = 10*30
+        , curvelw = 72 * 4.5
         , curveres = 100
         , window = [-1.1, 1.1, -1, 1]
         , domain = [-1, 1]
@@ -309,7 +307,7 @@ def cm_cos2_linearColorGradient():
         , curve = c
         , curvecol = mix
         , showcurve = True
-        , curvelw = 10*30
+        , curvelw = 72 * 4.5
         , curveres = 100
         , window = [-1.1, 1.1, -1, 1]
         , domain = [-1, 1]
@@ -328,7 +326,7 @@ def cm_cos2_threeColorGradient():
         , curve = c
         , curvecol = mix2
         , showcurve = True
-        , curvelw = 10*30
+        , curvelw = 72 * 4.5
         , curveres = 100
         , window = [-1.1, 1.1, -1, 1]
         , domain = [-1, 1]
