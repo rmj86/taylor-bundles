@@ -197,13 +197,68 @@ def tb_curveAndTangentInFullDomain():
     bundle.render()
     return True
 
+# draw a thick colored line - normal color mixing
+def cm_cos2_normalColorGradient():
+    c = curve.fromFunction(lambda x: numpy.zeros(x.shape))
+    mix = colormix.cosine2("r", "g", -1, 1, linear = False)
+    bundle = tb.TaylorBundle(
+          filename = "test/cm_cos2_normalColorGradient"
+        , curve = c
+        , curvecol = mix
+        , showcurve = True
+        , curvelw = 10*30
+        , curveres = 100
+        , window = [-1.1, 1.1, -1, 1]
+        , domain = [-1, 1]
+        , n_tan = 0
+        , dpi = 30
+        )
+    bundle.render()
+    return True
+# draw a thick colored line - linear color mixing
+def cm_cos2_linearColorGradient():
+    c = curve.fromFunction(lambda x: numpy.zeros(x.shape))
+    mix = colormix.cosine2("r", "g", -1, 1, linear = True)
+    bundle = tb.TaylorBundle(
+          filename = "test/cm_cos2_linearColorGradient"
+        , curve = c
+        , curvecol = mix
+        , showcurve = True
+        , curvelw = 10*30
+        , curveres = 100
+        , window = [-1.1, 1.1, -1, 1]
+        , domain = [-1, 1]
+        , n_tan = 0
+        , dpi = 30
+        )
+    bundle.render()
+    return True
+# color mixing can take another mixer as argument
+def cm_cos2_threeColorGradient():
+    c = curve.fromFunction(lambda x: numpy.zeros(x.shape))
+    mix1 = colormix.cosine2("r", "b", -1, 1)
+    mix2 = colormix.cosine2("g", mix1, 0, 1)
+    bundle = tb.TaylorBundle(
+          filename = "test/cm_cos2_threeColorGradient"
+        , curve = c
+        , curvecol = mix2
+        , showcurve = True
+        , curvelw = 10*30
+        , curveres = 100
+        , window = [-1.1, 1.1, -1, 1]
+        , domain = [-1, 1]
+        , n_tan = 0
+        , dpi = 30
+        )
+    bundle.render()
+    return True
 
 
 # TODO: what happens when n_parts is 0?
 
 
 ###############################################################################
-## test running infrastructure 
+## test running infrastructure
 
 def runtest(f, v=3):
     """ run test function. *f* should take no arguments and returns a Bool.
@@ -256,6 +311,9 @@ def render_tests(v=3):
              , tb_blankImage
              , tb_tangentsOnTheLeft
              , tb_curveAndTangentInFullDomain
+             , cm_cos2_normalColorGradient
+             , cm_cos2_linearColorGradient
+             , cm_cos2_threeColorGradient
              ]
            , v = v
            )
@@ -278,7 +336,7 @@ if __name__ == "__main__":
             print "Using default value: {}".format(v)
         else:
             v = n
-    
+
     render_tests(v=v)
     cm_tests(v=v)
     misc_tests(v=v)
