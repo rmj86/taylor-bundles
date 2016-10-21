@@ -279,6 +279,22 @@ def tb_blankImage4():
         )
     bundle.render()
     return True
+# drawing tangents only in the positive direction
+def tb_unidirectioanlTangents():
+    bundle = tb.TaylorBundle(
+          filename = "test/tb_unidirectioanlTangents"
+        , curve = curve.Curve(lambda x: x, numpy.sin)
+        , showcurve = True
+        , curvelw = 6
+        , n_tan = 100
+        , tanlw = 4
+        , tandomain = [0,4]
+        , domain = [-13, 13]
+        , dpi = 30
+        , window = [-16,16,-9,9]
+        )
+    bundle.render()
+    return True
     
 # draw a thick colored line - normal color mixing
 def cm_cos2_normalColorGradient():
@@ -399,6 +415,7 @@ def render_tests(v=3):
              , tb_curveAndTangentInFullDomain
              , tb_variableTanAlpha_highWhenIncreasing
              , tb_variableCurveAlpha_highWhenIncreasing
+             , tb_unidirectioanlTangents
              , cm_cos2_normalColorGradient
              , cm_cos2_linearColorGradient
              , cm_cos2_threeColorGradient
