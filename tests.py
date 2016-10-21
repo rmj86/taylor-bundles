@@ -121,14 +121,13 @@ def tb_curveColorConst():
 
 ## draw variable color curve
 def tb_curveColorVar():
-    cm = colormix.cosine2((1,0,0),(0,1,0),0,tb.tau/10)
-    t = numpy.linspace(0,1,3)
+    cm = colormix.cosine2("b", "r", 0, tb.tau/2, linear=True)
     bundle = tb.TaylorBundle(
           filename = "test/tb_curveColorVar"
         , curve = curve.Trochoid(-5, 0.6, 0)
         , curvelw = 10
         , curveres = 128
-        , curvecol = colormix.cosine2((1,0,0),(0,1,0),0,tb.tau/10, linear=True)
+        , curvecol = cm
         , showcurve = True
         , n_tan = 1
         , tanalpha = 0
@@ -140,8 +139,6 @@ def tb_curveColorVar():
 
 # draw nothing, neither curve nor any tangents!
 def tb_blankImage():
-    cm = colormix.cosine2((1,0,0),(0,1,0),0,tb.tau/10)
-    t = numpy.linspace(0,1,3)
     bundle = tb.TaylorBundle(
           filename = "test/tb_blankImage"
         , curve = curve.Trochoid(-5, 0.6, 0)
@@ -158,7 +155,6 @@ def tb_blankImage():
 
 ## draw tangents in half the domain only
 def tb_tangentsOnTheLeft():
-    t = numpy.linspace(0,1,3)
     bundle = tb.TaylorBundle(
           filename = "test/tb_tangentsOnTheLeft"
         , curve = curve.Curve(lambda x: x, numpy.sin)
@@ -178,7 +174,6 @@ def tb_tangentsOnTheLeft():
 # draw tagents in full domain - test is to make sure that setting *domain*
 # overrides *curvedomain* and *bundledomain*
 def tb_curveAndTangentInFullDomain():
-    t = numpy.linspace(0,1,3)
     bundle = tb.TaylorBundle(
           filename = "test/tb_curveAndTangentInFullDomain"
         , curve = curve.Curve(lambda x: x, numpy.sin)
@@ -237,7 +232,7 @@ def cm_cos2_linearColorGradient():
 def cm_cos2_threeColorGradient():
     c = curve.fromFunction(lambda x: numpy.zeros(x.shape))
     mix1 = colormix.cosine2("r", "b", -1, 1)
-    mix2 = colormix.cosine2("g", mix1, 0, 1)
+    mix2 = colormix.cosine2("gold", mix1, 0, 1)
     bundle = tb.TaylorBundle(
           filename = "test/cm_cos2_threeColorGradient"
         , curve = c

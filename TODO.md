@@ -7,6 +7,7 @@ Short term:
 8. ~~colormix should work on numpy arrays~~
 12. ~~__curve__ module should have a _fromFunction_ which take an argument f and returns a Curve(x, f(x))~~
 10. ~~renderer should issue a WARNING when it is passed an invalid option.~~
+13. ~~let a colormixer maker take another mixer as an argument, for more complex color possibilities.~~
 4. Write readme - how to use 
     1. Index
     2. ~~Statement of purpose~~

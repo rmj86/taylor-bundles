@@ -5,16 +5,26 @@ Created on Wed Feb 17 22:45:14 2016
 @author: hannes
 """
 
-from numpy import pi, cos, sqrt, array, newaxis
+from numpy import pi, cos, sqrt, array, newaxis, full
 from matplotlib.colors import colorConverter
+from types import FunctionType
 
 tau = 2*pi
 
-def constant(color):
-    def mix(t):
-        return color
-    return mix
+# def constant(color):
+    # def mix(t):
+        # return color
+    # return mix
 
+def color2ufunc(color):
+    if type(color) == FunctionType: # assume its valid and return unchanged
+        return color
+    else:  # it is a constant
+        c_arr = colorConverter.to_rgba_array(color)
+        def const_color(t):
+            return full(t.shape+(4,), c_arr)
+        return const_color
+    
 def cosine2(color1, color2, u, v, linear=False):
     """ returns a function mix(t) which mixes colors c1 and c2. c1 and c2
         are  any valid matplotlib color. E.g. a color char ('r'), a html
@@ -25,22 +35,17 @@ def cosine2(color1, color2, u, v, linear=False):
         returns a numpy array with shape (n,4) - rgba."""
     period = 2*(v-u)
     const = tau/period
-    c1 = colorConverter.to_rgba_array(color1)
-    c2 = colorConverter.to_rgba_array(color2)
-    if linear:
-        def mix(t):
-            m = 0.5 * (1 + cos((t-u) * const))
-            m = m[:,newaxis]
-            return sqrt(m*c1**2 + (1-m)*c2**2)
-    else:
-        def mix(t):
-            # TODO: should take numpy array argument
-            m = 0.5 * (1 + cos((t-u) * const))
-            m = m[:,newaxis]
+    cfunc1 = color2ufunc(color1)
+    cfunc2 = color2ufunc(color2)
+    def mix(t):
+        m = 0.5 * (1 + cos((t-u) * (tau/period)))
+        m = m[:, newaxis]
+        c1 = cfunc1(t)
+        c2 = cfunc2(t)
+        if linear:
+            return sqrt(m*(c1**2) + (1-m)*(c2**2))
+        else:
             return m*c1 + (1-m)*c2
-            
-            
-            
     return mix
     
 def main():
