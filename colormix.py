@@ -11,11 +11,6 @@ from types import FunctionType
 
 tau = 2*pi
 
-# def constant(color):
-    # def mix(t):
-        # return color
-    # return mix
-
 def fromConstant(color):
     if type(color) == FunctionType: # assume its valid and return unchanged
         return color
@@ -47,17 +42,3 @@ def cosine2(color1, color2, u, v, linear=False):
         else:
             return m*c1 + (1-m)*c2
     return mix
-    
-def main():
-    import numpy
-    cm = cosine2((1,0,0),(0,0,1),0,1)
-    t = numpy.linspace(0,1,9)
-    c = cm(t[:,numpy.newaxis])
-    print cm(0)
-    print cm(0).shape
-    print 
-    print c
-    print c.shape
-
-if __name__ == "__main__":
-    main()
