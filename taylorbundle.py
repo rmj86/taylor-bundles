@@ -56,12 +56,12 @@ class TaylorBundle:
     curveres = 256           # resolution of generating curve
     curvecol = "w"           # colour of generating curve
     curvelw = 2              # line width of generating curve
-    curvealpha = 1.0         # transparency of generating curve
+    curvealpha = None        # transparency of generating curve
     tanlen = 2               # +-length of (domain of) tangent curves
     tanres = 256             # resolution of tangent curves
     tancol = "r"  # colour of tangents. Can be constant or generating function
     tanlw = 0.2              # line width of tangents
-    tanalpha = 0.2           # tranparency of tangents
+    tanalpha = None          # tranparency of tangents
     filename = None          # file name to save to. Defaults to date and time
     keep_partials = False    # keep partial files after render finishes
     def __init__(self, **options):
@@ -88,8 +88,9 @@ class TaylorBundle:
         ax.clear()
         ax.axis(self.window)
         ax.axis("off")
-    #@timed(showargs=False)
-    def drawTangents(self, tmin, tmax, n_tan):
+        return ax
+    # @timed(showargs=False)
+    def drawTangents(self, ax, tmin, tmax, n_tan):
         # function paramter values
         ts_ = numpy.linspace(tmin, tmax, n_tan, False)
         ts = misc.permute(ts_)
@@ -103,33 +104,31 @@ class TaylorBundle:
         for t, c in zip(ts, colors):
             p = self.curve.taylorCurve(t, self.degree)
             s = numpy.linspace(t - self.tanlen, t + self.tanlen, self.tanres)
-            pyplot.plot( p.x(s), p.y(s), color=c
-                       , linewidth=self.tanlw, alpha=self.tanalpha)
-        # plot the curve
-        if self.showcurve:
-            self.drawCurve()
+            ax.plot( p.x(s), p.y(s), color=c, zorder=0
+                       , linewidth=self.tanlw, alpha=self.tanalpha )
 
-    def drawCurve(self):
+    def drawCurve(self, ax):
         # print "drawing"
         # return
         # print repr(self._drawCurve_constcolor)
         if type(self.curvecol) == types.FunctionType:
-            self._drawCurve_varColor()
+            self._drawCurve_varColor(ax)
         else:
-            self._drawCurve_constColor()
+            self._drawCurve_constColor(ax)
 
-    def _drawCurve_constColor(self):
+    def _drawCurve_constColor(self, ax):
         # pass
         tmin, tmax = self.curvedomain
         t = numpy.linspace(tmin, tmax, self.curveres)
-        pyplot.plot(
+        ax.plot(
               self.curve.x(t)
             , self.curve.y(t)
             , color = self.curvecol
             , lw = self.curvelw
             , alpha = self.curvealpha
+            , zorder = 1
             )
-    def _drawCurve_varColor(self):
+    def _drawCurve_varColor(self, ax):
         tmin, tmax = self.curvedomain
         t = numpy.linspace(tmin, tmax, self.curveres)
         x = self.curve.x(t)
@@ -140,10 +139,11 @@ class TaylorBundle:
         coords[:,0,1] = y[:-1]
         coords[:,1,1] = y[1:]
         colors = self.curvecol(t)
-        # print colors
         segments = LineCollection( coords
                                  , colors = colors[:-1]
-                                 , lw = self.curvelw )
+                                 , lw = self.curvelw
+                                 , alpha = self.curvealpha
+                                 , zorder = 1 )
         ax = pyplot.gca()
         ax.add_collection(segments)
 
@@ -172,8 +172,11 @@ class TaylorBundle:
         ds = numpy.linspace(0, dt, n_part, False)
         partial_filenames = []
         for i, d in enumerate(ds):
-            self.initializeAxes()  # clear the current axes
-            self.drawTangents(tmin+d, tmax+d, n_tan)
+            ax = self.initializeAxes()  # clear the current axes
+            self.drawTangents(ax, tmin+d, tmax+d, n_tan)
+            # plot the curve
+            if self.showcurve:
+                self.drawCurve(ax)
             pfname = "{}_partial{}.png".format(filename, i)
             fig.savefig(pfname, dpi = self.dpi, facecolor = self.facecolor)
             partial_filenames.append(pfname)

@@ -28,7 +28,7 @@ Short term:
         * something about linear color space?
 3. Make a gallery of example renders
 5. Comment the modules regarding implementation details
-9. tangents should be able to get their (variable) alpha value from the color(-mixer) as part of the rgba tuple. If parameter _tanalpha_ is not None, it should overide the rgba alpha value
+9. ~~tangents should be able to get their (variable) alpha value from the color(-mixer) as part of the rgba tuple. If parameter _tanalpha_ is not None, it should overide the rgba alpha value~~
 
 Long term:
 

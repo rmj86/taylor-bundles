@@ -154,7 +154,7 @@ showcurve  | True |  show the generating curve on top of the tangent bundle
 curveres   | 256  |  resolution of generating curve
 curvecol   | "w"  |  colour of generating curve
 curvelw    | 2    |  line width of generating curve
-curvealpha | 1.0  |  transparency of generating curve
+curvealpha | None |  transparency of generating curve
 
 ###### Rendering of the Taylor curves
 
@@ -164,7 +164,7 @@ n_tan    | 2500 | number of tangents per partial image
 tanlen   | 2    | +-length of (domain of) tangent curves
 tanres   | 256  | resolution of tangent curves
 tanlw    | 0.2  | line width of tangents
-tanalpha | 0.2  | tranparency of tangents
+tanalpha | None | tranparency of tangents
 tancol   | "r"  | colour of tangents. Can be constant or generating function
 
 ###### Rendering of the image
