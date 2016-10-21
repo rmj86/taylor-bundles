@@ -4,6 +4,7 @@ import sys
 import taylorbundle as tb
 import curve
 import colormix
+import misc
 
 import numpy
 
@@ -73,6 +74,28 @@ def cm_cos2_arrParamLinear():
     t2[1] = (sqt2, 0, sqt2, sqt2)
     t2[2] = (0, 0, 1, 1)
     b = (t == t2).all()
+    return b
+
+####################
+## misc test cases
+
+# permute - does not produce an array with duplicate entries
+def misc_permute_nonDuplicateEntries():
+    m = 100
+    failed = []
+    for i in range(m):
+        u = numpy.arange(i)
+        v = misc.permute(u)
+        v.sort()
+        if not numpy.all(u==v):
+            return False
+    return True
+# permute - produces the right ordering ("fibonacci permutation")
+def misc_permute_rightOrder():
+    r = numpy.arange(8)
+    r = misc.permute(r)
+    s = numpy.array([0, 5, 2, 7, 4, 1, 6, 3])
+    b = (r==s).all()
     return b
 
 ###############################################################################
@@ -220,6 +243,12 @@ def cm_tests(v=3):
              ]
            , v = v
            )
+def misc_tests(v=3):
+    testAll( [ misc_permute_nonDuplicateEntries
+             , misc_permute_rightOrder
+             ]
+           , v = v
+           )
 
 def render_tests(v=3):
     testAll( [ tb_curveColorConst
@@ -252,3 +281,4 @@ if __name__ == "__main__":
     
     render_tests(v=v)
     cm_tests(v=v)
+    misc_tests(v=v)
