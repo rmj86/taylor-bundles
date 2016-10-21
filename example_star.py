@@ -22,7 +22,7 @@ def main():
         , figsize = [8.267, 11.692]
         , facecolor = 'w'
         , tancol = color_f
-        , tanlen = 24
+        , tandomain = [-24, 24]
         , filename = "renders/example_star"
         )
 

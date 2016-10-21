@@ -16,7 +16,7 @@ tb1 = taylorbundle.TaylorBundle(
         , window = [-wx, wx, -wy, wy]
         , domain = [-wx, wx]
         , curvelw = 6
-        , tanlen = 30
+        , tandomain = [-30, 30]
         , dpi = 30
         )
 
@@ -97,7 +97,7 @@ tb3.set_options(
         , tanlw = 0.8
         , tanalpha = 0.3
         , degree = 4
-        , tanlen = 1
+        , tandomain = [-1, 1]
         )
 
 def fig6():

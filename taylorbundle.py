@@ -38,7 +38,7 @@ class TaylorBundle:
              , "domain", "curvedomain", "bundledomain"
              , "figsize", "dpi", "window", "facecolor"
              , "showcurve", "curveres", "curvecol", "curvelw"
-             , "curvealpha", "tanlen", "tanres", "tancol"
+             , "curvealpha", "tandomain", "tanres", "tancol"
              , "tanlw", "tanalpha", "filename", "keep_partials"
              }
     curve = None
@@ -57,7 +57,7 @@ class TaylorBundle:
     curvecol = "w"           # colour of generating curve
     curvelw = 2              # line width of generating curve
     curvealpha = None        # transparency of generating curve
-    tanlen = 2               # +-length of (domain of) tangent curves
+    tandomain = [-2, 2]      # domain of tangent polynomial (around the point of tangency)
     tanres = 256             # resolution of tangent curves
     tancol = "r"  # colour of tangents. Can be constant or generating function
     tanlw = 0.2              # line width of tangents
@@ -92,18 +92,19 @@ class TaylorBundle:
     # @timed(showargs=False)
     def drawTangents(self, ax, tmin, tmax, n_tan):
         # function paramter values
-        ts_ = numpy.linspace(tmin, tmax, n_tan, False)
-        ts = misc.permute(ts_)
+        t = numpy.linspace(tmin, tmax, n_tan, False)
+        t = misc.permute(t)
         # color array
         if type(self.tancol) == types.FunctionType:
-            colors = self.tancol(ts)
+            colors = self.tancol(t)
         else:
             c_arr = colorConverter.to_rgba_array(self.tancol)
             colors = numpy.full((n_tan, 4), c_arr)
         # plot the tangents on current axis
-        for t, c in zip(ts, colors):
-            p = self.curve.taylorCurve(t, self.degree)
-            s = numpy.linspace(t - self.tanlen, t + self.tanlen, self.tanres)
+        (amin, amax) = self.tandomain
+        for a, c in zip(t, colors):
+            p = self.curve.taylorCurve(a, self.degree)
+            s = numpy.linspace(a+amin, a+amax, self.tanres)
             ax.plot( p.x(s), p.y(s), color=c, zorder=0
                        , linewidth=self.tanlw, alpha=self.tanalpha )
 
