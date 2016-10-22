@@ -8,6 +8,7 @@ Short term:
 12. ~~__curve__ module should have a _fromFunction_ which take an argument f and returns a Curve(x, f(x))~~
 10. ~~renderer should issue a WARNING when it is passed an invalid option.~~
 13. ~~let a colormixer maker take another mixer as an argument, for more complex color possibilities.~~
+9. ~~tangents should be able to get their (variable) alpha value from the color(-mixer) as part of the rgba tuple. If parameter _tanalpha_ is not None, it should overide the rgba alpha value~~
 4. Write readme - how to use 
     1. Index
     2. ~~Statement of purpose~~
@@ -20,15 +21,14 @@ Short term:
         * ~~example files and renders~~
         * options
     4. Other modules
-        * cuves, prdefined
-        * curves, how to define your own
+        * ~~curves, prdefined~~
+        * ~~curves, how to define your own~~
         * colormixer, how it works
         * clormixer, predefined options,
         * how to define your own, with examples
         * something about linear color space?
 3. Make a gallery of example renders
 5. Comment the modules regarding implementation details
-9. ~~tangents should be able to get their (variable) alpha value from the color(-mixer) as part of the rgba tuple. If parameter _tanalpha_ is not None, it should overide the rgba alpha value~~
 
 Long term:
 

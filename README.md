@@ -138,55 +138,87 @@ TODO more verbose descriptions
 
 ###### Mathematical specification of the bundle
 
-option | Default Value | Description
--------|---------------|------------
-curve        | None       | The generating curve for the bundle. 
-degree       | = 1        | The degree of the Taylor polynomials.
-bundledomain | = (0, tau) | The domain to render tangent polynomals in.
-curvedomain  | = (0, tau) | The domain to show `curve` in.
-domain       | = (0, tau) | The domain of both the curve and tangent space. Setting this option (with the setter) overwrites the values of `curvedomain` and `bundledomain`.
+option       | Default Value | Description
+-------------|---------------|------------
+curve        | None          | The generating curve for the bundle. 
+degree       | 1             | The degree of the Taylor polynomials.
+bundledomain | (0, tau)      | The domain to render tangent polynomals in.
+curvedomain  | (0, tau)      | The domain to show `curve` in.
+domain       | (0, tau)      | The domain of both the curve and tangent space. Setting this option (with the setter) overwrites the values of `curvedomain` and `bundledomain`.
 
 ###### Rendering of the generating curve
 
 option | Default Value | Description
 -------|---------------|------------
-showcurve  | True |  show the generating curve on top of the tangent bundle
-curveres   | 256  |  resolution of generating curve
-curvecol   | "w"  |  colour of generating curve
-curvelw    | 2    |  line width of generating curve
-curvealpha | None |  transparency of generating curve
+showcurve  | True |  If `True`, Show the generating curve on top of the tangent bundle.
+curveres   | 256  |  Resolution of generating curve
+curvecol   | "w"  |  Colour of generating curve. For a list of valid color values, see the section on `colormix.py`
+curvelw    | 2    |  Line width of generating curve, in points. This is relative to `figsize`, not resolution. There are 72 points in an inch
+curvealpha | None |  Transparency of generating curve. Should be a number between 0.0 (invisible) and 1.0 (opaque). If it is `None` alpha is determined by the `curvecol` argument and can be variable.
 
 ###### Rendering of the Taylor curves
 
 option | Default Value | Description
 -------|---------------|------------
-n_tan    | 2500 | number of tangents per partial image
-tanlen   | 2    | +-length of (domain of) tangent curves
-tanres   | 256  | resolution of tangent curves
-tanlw    | 0.2  | line width of tangents
-tanalpha | None | tranparency of tangents
-tancol   | "r"  | colour of tangents. Can be constant or generating function
+n_tan     | 200    | Number of tangents per image render.
+tandomain | [-2,2] | Domain of tangent lines (extension of parameter around the point of tangency.)
+tanres    | 256    | resolution of tangent curves
+tanlw     | 0.2    | line width of tangents
+tanalpha  | None   | tranparency of tangents
+tancol    | "r"    | colour of tangents. Can be constant or generating function
 
 ###### Rendering of the image
 
 option | Default Value | Description
 -------|---------------|------------
-n_part    | 1               | Number of partial images to render
-facecolor | 'k'             | Background colour of plotting surface
-window    | [0, tau, -2, 2] | Bounds of the plotting surface
-figsize   | (16,9)          | Size of image (in inches)
-dpi       | 120             | DPI of image
+n_part    | 1             | Number of partial images to render. Drawing tens of thousands of lines to a single frame can cause memory problems. With this setting >1 the rendering is split up over multiple images which are finally combined.
+facecolor | 'k'           | Background colour of plotting surface
+window    | [-16,16,-9,9] | Bounds of the plotting coordinate system (xmin, xmax, ymin, ymax).
+figsize   | (16,9)        | Size of image (width, height) in inches.
+dpi       | 120           | Resolution of image (dots per inch).
 
 Other
 
 option | Default Value | Description
 -------|---------------|------------
-filename      | None  | Name for the saved image file. If `none`, makes a file name based on current date and time.
+filename      | None  | Name for the saved image file. If `None`, makes a file name based on current date and time.
 keep_partials | False | Keep partial files after render finishes
+
+###### Sensible options for good image quality
+
+TODO
 
 #### `curve.py`
 
+`curve.py` exports the following names:
+
+Name |  Description
+Curve        | Curve base class, representing a parametric curve (x(t), y(t)). Initialize with `Curve(x,y)` where `x` and `y` are functions.
+fromFunction | Given a function `f`, return a `Curve` object representing the curve y=f(x), I.e. the parametric curve (t, f(t)).
+Trochoid     | Curve subclass representing a trochoid curve. Can be either an epitrochoid or hypotrochoid depending on parameters. See the docstring for details.
+Lissajous    | Curve sbclass representig a lissajous curve. See docstring for details.
+
 #### Define Your Own Curves
+
+A curve must inherit from the `Curve` class. `Curve` has the `taylorCurve` method, which is what allows us to draw our Taylor bundles. The curve must also have `x` and `y` attributes. ´x´ and ´y´ must be functions that take numpy `ndarray`s as their input and give `ndarray`s as their output.
+
+Optionally you can define the attribute ´derivative´ for `x` and `y`, giving the exact derivative in a point. If it is not present, numerical differentiation is used by default. The results can be acceptable. E.g. in `example_asteroid.py` the numeric procedure produces almost exactly the same result as the symbolic one, but this should not be relied upon in general. The applicability depends very much on the nature of the function in question.
+
+When calculating an nth order Taylor curve, you must know derivatives of order 1 through n. The `derivative` function takes two arguments, e.g. `def derivative(a, d=1): ...` where `a` is the point to take the derivative and `d` is the order of the derivative.
+
+Normally you can not set new attributes on library functions. E.g.
+
+```Python
+x = numpy.sin
+x.derivative = ...
+```
+
+raises an `AttributeError`. However it is fine to do with user-defined functions, and if you want to use a simple libraru finction you can just wrap it in a lambda:
+
+```Python
+x = lambda t: numpy.sin(t)
+x.derivative = ...
+```
 
 #### `colormix.py`
 
