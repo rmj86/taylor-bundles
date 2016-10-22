@@ -351,7 +351,45 @@ def cm_cos2_threeColorGradient():
         )
     bundle.render()
     return True
-
+# gaussian can take another mixer as color arg, and can produce the right
+# result; a single peak of color on a given background.
+def cm_gaussian_redWithPeaksLeftWideRightThin():
+    c = curve.fromFunction(lambda x: numpy.zeros(x.shape))
+    mix1 = colormix.gaussian("dodgerBlue", "red", -0.4, 0.3)
+    mix2 = colormix.gaussian("dodgerblue", mix1, 0.6, 0.1)
+    bundle = tb.TaylorBundle(
+          filename = "test/cm_gaussian_redWithPeaksLeftWideRightThin"
+        , curve = c
+        , curvecol = mix2
+        , showcurve = True
+        , curvelw = 72 * 4.5
+        , curveres = 100
+        , window = [-1.1, 1.1, -1, 1]
+        , domain = [-1, 1]
+        , n_tan = 0
+        , dpi = 30
+        )
+    bundle.render()
+    return True
+# gaussian can take another mixer as color arg, and can tale `linear` arg
+def cm_gaussian_redWithPeaksLeftLinearRightNormal():
+    c = curve.fromFunction(lambda x: numpy.zeros(x.shape))
+    mix1 = colormix.gaussian("dodgerBlue", "red", -0.6, 0.15, linear=True)
+    mix2 = colormix.gaussian("dodgerblue", mix1, 0.6, 0.15, linear=False)
+    bundle = tb.TaylorBundle(
+          filename = "test/cm_gaussian_redWithPeaksLeftLinearRightNormal"
+        , curve = c
+        , curvecol = mix2
+        , showcurve = True
+        , curvelw = 72 * 4.5
+        , curveres = 100
+        , window = [-1.1, 1.1, -1, 1]
+        , domain = [-1, 1]
+        , n_tan = 0
+        , dpi = 30
+        )
+    bundle.render()
+    return True
 
 # TODO: what happens when n_parts is 0?
 
@@ -419,6 +457,8 @@ def render_tests(v=3):
              , cm_cos2_normalColorGradient
              , cm_cos2_linearColorGradient
              , cm_cos2_threeColorGradient
+             , cm_gaussian_redWithPeaksLeftWideRightThin
+             , cm_gaussian_redWithPeaksLeftLinearRightNormal
              ]
            , v = v
            )
@@ -445,3 +485,5 @@ if __name__ == "__main__":
     render_tests(v=v)
     cm_tests(v=v)
     misc_tests(v=v)
+    # cm_gaussian_redWithPeaksLeftWideRightThin()
+    # cm_gaussian_redWithPeaksLeftLinearRightNormal()
