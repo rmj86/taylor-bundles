@@ -11,8 +11,8 @@ from numpy.polynomial import Polynomial
 from math import factorial
 
 def derivative(f, a, d=1, h=0.1):
-    """ Derivative of function f at point x=a to degree d. Can give exact 
-        derivative if f.derivative is defined. Otherwise it defaults to 
+    """ Derivative of function f at point x=a to degree d. Can give exact
+        derivative if f.derivative is defined. Otherwise it defaults to
         numerical derivative. """
     if "derivative" in dir(f):
         return f.derivative(a, d)
@@ -37,7 +37,7 @@ def taylorExpansion(f, a, d=1):
         q.maxpower = i
         p = p + q**i * derivative(f,a,i) / factorial(i)
     return p
-    
+
 # test: does it work with functions that are not vectorized, e.g. a constant function?
 class Curve:
     """Parametric 2D curve."""
@@ -62,7 +62,7 @@ def fromFunction(f):
 sinprime = [sin, cos, lambda x: -sin(x), lambda x: -cos(x)]
 # The derivatives of cos; cyclic
 cosprime = sinprime[1:] + [sinprime[0]]
-    
+
 # does it work eeven thoug x and y are not vectorixed?
 class Trochoid(Curve):
     def __init__(self, n, r, o=0.0, **kwargs):
@@ -80,6 +80,23 @@ class Trochoid(Curve):
         def y_derivative(a, d=1):
             sp = sinprime[d%4]  # d:th derivative of sin
             return sp(a) + r*(n+1)**d*sp((n+1)*a + o)
+        Curve.__init__(self, x, y)
+        self.x.derivative = x_derivative
+        self.y.derivative = y_derivative
+
+class Lissajous(Curve):
+    def __init__(self, a, b, A, B, delta):
+        """ x = A * sin(a + delta)
+            y = B * sin(b)
+            https://en.wikipedia.org/wiki/Lissajous_curve """
+        def x(t):
+            return A * sin(a*t + delta)
+        def y(t):
+            return B * sin(b*t)
+        def x_derivative(t, d=1):
+            return A * a**d * sinprime[d%4](a*t + delta)
+        def y_derivative(t, d=1):
+            return B * b**d * sinprime[d%4](b*t)
         Curve.__init__(self, x, y)
         self.x.derivative = x_derivative
         self.y.derivative = y_derivative
