@@ -10,16 +10,16 @@ from numpy import sin, cos
 from numpy.polynomial import Polynomial
 from math import factorial
 
-def derivative(f, a, d=1, h=0.1):
+def derivative(f, a, d=1):
     """ Derivative of function f at point x=a to degree d. Can give exact
         derivative if f.derivative is defined. Otherwise it defaults to
         numerical derivative. """
     if "derivative" in dir(f):
         return f.derivative(a, d)
     else:
-        return derivative_numerical(f, a, d, h)
+        return derivative_numerical(f, a, d)
 
-def derivative_numerical(f, a, d=1, h=0.01):
+def derivative_numerical(f, a, d=1, h=0.02):
     """ Numeric derivative of function f at point x=a.
         Derivative of degree d, with point sampling distance h. """
     i = numpy.linspace(-d, d, d+1)
@@ -38,7 +38,6 @@ def taylorExpansion(f, a, d=1):
         p = p + q**i * derivative(f,a,i) / factorial(i)
     return p
 
-# test: does it work with functions that are not vectorized, e.g. a constant function?
 class Curve:
     """Parametric 2D curve."""
     def __init__(self, x, y):
@@ -52,7 +51,7 @@ class Curve:
 
 def fromFunction(f):
     """takes a function  f  and returns a Curve object representing
-       the curve  <t, f(t)>"""
+       the parametric curve  <t, f(t)>"""
     x = lambda t: t
     y = lambda t: f(t)
     c = Curve(x, y)
@@ -63,13 +62,12 @@ sinprime = [sin, cos, lambda x: -sin(x), lambda x: -cos(x)]
 # The derivatives of cos; cyclic
 cosprime = sinprime[1:] + [sinprime[0]]
 
-# does it work eeven thoug x and y are not vectorixed?
 class Trochoid(Curve):
     def __init__(self, n, r, o=0.0, **kwargs):
         """ n: Number f loops. Positive n makes epitrochoid,
                                negative n makes hypotrochoid.
             r: radius of the rolling part. (fixed part has radius 1)
-            o: rotational offset """
+            o: rotational offset of rolling part. """
         def x(t):
             return cos(t) + r * cos((n+1)*t + o)
         def y(t):
