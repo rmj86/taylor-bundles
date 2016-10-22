@@ -20,7 +20,7 @@ def fromConstant(color):
             return full(t.shape+(4,), c_arr)
         return const_color
     
-def cosine2(color1, color2, u, v, linear=False):
+def cosine2(color1, color2, u, v, linear=True):
     """ returns a function mix(t) which mixes colors c1 and c2. c1 and c2
         are  any valid matplotlib color. E.g. a color char ('r'), a html
         color name ("red"), a html hex color ("#FF0000") or a 3- or 4-tuple.
@@ -43,7 +43,10 @@ def cosine2(color1, color2, u, v, linear=False):
             return m*c1 + (1-m)*c2
     return mix
 
-def gaussian(color1, color2, mu, sigma, linear=False):
+def gaussian(color1, color2, mu, sigma, linear=True):
+    """ Mix color1 and color2 according to a gaussian fuinction.
+        There is a single peak of color1 on top of color2, with
+        center mu and width sigma. """
     cfunc1 = fromConstant(color1)
     cfunc2 = fromConstant(color2)
     def mix(t):
