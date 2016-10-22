@@ -5,7 +5,7 @@ Created on Wed Feb 17 22:45:14 2016
 @author: hannes
 """
 
-from numpy import pi, cos, sqrt, array, newaxis, full
+from numpy import pi, cos, sqrt, array, newaxis, full, exp, power
 from matplotlib.colors import colorConverter
 from types import FunctionType
 
@@ -34,6 +34,20 @@ def cosine2(color1, color2, u, v, linear=False):
     cfunc2 = fromConstant(color2)
     def mix(t):
         m = 0.5 * (1 + cos((t-u) * (tau/period)))
+        m = m[:, newaxis]
+        c1 = cfunc1(t)
+        c2 = cfunc2(t)
+        if linear:
+            return sqrt(m*(c1**2) + (1-m)*(c2**2))
+        else:
+            return m*c1 + (1-m)*c2
+    return mix
+
+def gaussian(color1, color2, mu, sigma, linear=False):
+    cfunc1 = fromConstant(color1)
+    cfunc2 = fromConstant(color2)
+    def mix(t):
+        m = exp(-power(t - mu, 2.) / (2 * power(sigma, 2.)))
         m = m[:, newaxis]
         c1 = cfunc1(t)
         c2 = cfunc2(t)
