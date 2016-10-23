@@ -371,7 +371,7 @@ def cm_gaussian_redWithPeaksLeftWideRightThin():
         )
     bundle.render()
     return True
-# gaussian can take another mixer as color arg, and can tale `linear` arg
+# gaussian can take another mixer as color arg, and can take `linear` arg
 def cm_gaussian_redWithPeaksLeftLinearRightNormal():
     c = curve.fromFunction(lambda x: numpy.zeros(x.shape))
     mix1 = colormix.gaussian("dodgerBlue", "red", -0.5, 0.2, linear=True)
@@ -385,6 +385,43 @@ def cm_gaussian_redWithPeaksLeftLinearRightNormal():
         , curveres = 481
         , window = [-1, 1, -1, 1]
         , domain = [-1, 1]
+        , n_tan = 0
+        , dpi = 30
+        )
+    bundle.render()
+    return True
+# smoothstep basic case
+def cm_smoothstep_redToBlue():
+    c = curve.fromFunction(lambda x: numpy.zeros(x.shape))
+    mix = colormix.smoothstep("red", "blue", 1, 2)
+    bundle = tb.TaylorBundle(
+          filename = "test/cm_smoothstep_redToBlue"
+        , curve = c
+        , curvecol = mix
+        , showcurve = True
+        , curvelw = 72 * 2
+        , curveres = 481
+        , window = [0, 3, -1, 1]
+        , domain = [0, 3]
+        , n_tan = 0
+        , dpi = 30
+        )
+    bundle.render()
+    return True
+# smoothstep can take another mixer as argument
+def cm_smoothstep_redToGreenToBlue():
+    c = curve.fromFunction(lambda x: numpy.zeros(x.shape))
+    mix1 = colormix.smoothstep("red", "green", 2, 3)
+    mix2 = colormix.smoothstep(mix1, "blue", 6, 7)
+    bundle = tb.TaylorBundle(
+          filename = "test/cm_smoothstep_redToGreenToBlue"
+        , curve = c
+        , curvecol = mix2
+        , showcurve = True
+        , curvelw = 72 * 2
+        , curveres = 481
+        , window = [0, 9, -1, 1]
+        , domain = [0, 9]
         , n_tan = 0
         , dpi = 30
         )
@@ -459,6 +496,8 @@ def render_tests(v=3):
              , cm_cos2_threeColorGradient
              , cm_gaussian_redWithPeaksLeftWideRightThin
              , cm_gaussian_redWithPeaksLeftLinearRightNormal
+             , cm_smoothstep_redToBlue
+             , cm_smoothstep_redToGreenToBlue
              ]
            , v = v
            )
