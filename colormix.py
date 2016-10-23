@@ -14,7 +14,26 @@ def fromConstant(color):
         def const_color(t):
             return full(t.shape+(4,), c_arr)
         return const_color
-    
+
+def smoothstep(color1, color2, start, end, linear = True):
+    def smooth(t): # smooth step from 1 to 0 in the domain (0,1)
+        return 1+t*t*(2*t-3)
+    cfunc1 = fromConstant(color1)
+    cfunc2 = fromConstant(color2)
+    def mix(t):
+        ts = (t-start)/(end-start)  # t scaled to fit the domain of smooth
+        m = smooth(ts)
+        m[ts<0] = 1 # pure color1 before step
+        m[ts>1] = 0 # pure color2 after step
+        m = m[:, newaxis]
+        c1 = cfunc1(t)
+        c2 = cfunc2(t)
+        if linear:
+            return sqrt(m*(c1**2) + (1-m)*(c2**2))
+        else:
+            return m*c1 + (1-m)*c2
+    return mix
+
 def cosine2(color1, color2, peak1, peak2, linear=True):
     """ returns a function mix(t) which mixes colors c1 and c2. c1 and c2
         are  any valid matplotlib color. E.g. a color char ('r'), a html
