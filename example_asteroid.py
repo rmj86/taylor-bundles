@@ -20,7 +20,7 @@ c_num = curve.Curve(x, y)
 
 color1 = (0.2, 0.4, 1)  # clear blue
 color2 = (1, 0, 0.2)    # red
-mix = colormix.cosine2(color1, color2, 0, tau/4)
+mix = colormix.mix2(color1, color2, colormix.cosine(0, tau/4))
 
 tb = taylorbundle.TaylorBundle(
       filename = "renders/example_asteroid_numericdiff"

@@ -85,8 +85,8 @@ def fig5():
 
 o = pi/4  # rotational offset of curve, in radians
 curve_troch = curve.Trochoid(4, 0.8, 4*o)
-# c_mix = colormix.cosine2((0,0.7,0.2), (1,0,0.1), o+0, o+pi/4, linear=True)
-c_mix = colormix.cosine2("gold", "dodgerblue", o+0, o+pi/4, linear=True)
+c_mix = colormix.mix2("gold", "dodgerblue", 
+                      colormix.cosine(o+0, o+pi/4), linear=True)
 tb3 = copy(tb1)
 tb3.set_options(
           curve = curve_troch

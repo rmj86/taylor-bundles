@@ -13,7 +13,7 @@ c = curve.Trochoid(-5, r= 14./240)
 color1 = (1, 0.2, 0.1) # lightish red
 color2 = (0.2, 0, 0)   # reddish black
 # periodic gradient with color1 around t=0 and color2 around t=tau/10
-mix = colormix.cosine2(color1, color2, 0, tau/10)
+mix = colormix.mix2(color1, color2, colormix.cosine(0, tau/10))
 tb = taylorbundle.TaylorBundle(
       curve = c
     , filename = "renders/example_star"

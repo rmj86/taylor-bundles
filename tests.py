@@ -4,6 +4,7 @@ import sys
 import taylorbundle as tb
 import curve
 import colormix
+from colormix import smoothstep, cosine, gaussian
 import misc
 
 import numpy
@@ -11,73 +12,109 @@ import numpy
 
 ###############################################################################
 ## Color mixer test cases.
-
-## colormix - can take rgb tuple as color value
-def cm_cos2_3tupleCol():
-    cmix = colormix.cosine2((1,0,0),(0,0,1),0,1, linear=False)
-    t = numpy.array([0.5])
-    c = cmix(t)
-    b = (c == (0.5, 0, 0.5, 1)).all()
+##
+# helper function. tests that that the argument produces a 
+# color function which returns [1,0,0,1] (red).
+def fromConstant_helper(arg):
+    colorfunc = colormix.fromConstant(arg)
+    t = numpy.array([-1,0,10,10000])
+    c = colorfunc(t)
+    c_ = (1,0,0,1)
+    b = type(c) == numpy.ndarray  and  (c==c_).all()
     return b
-## colormix - can take rgba colors
-def cm_cos2_4tupleCol():
-    cmix = colormix.cosine2((1,0,0,0), (0,0,1,1), 0, 1, linear=False)
-    t = numpy.array([0.5])
-    c = cmix(t)
-    b = (c == (0.5, 0, 0.5, 0.5)).all()
-    return b
-## colormix - can take matplotlib color char as color value
-def cm_cos2_charCol():
-    cmix = colormix.cosine2('r', 'b', 0, 1, linear=False)
-    t = numpy.array([0.5])
-    c = cmix(t)
-    b = (c == (0.5, 0, 0.5, 1)).all()
-    return b
-## colormix - can take matplotlib color string as color value
-def cm_cos2_strCol():
-    cmix = colormix.cosine2('red', 'blue', 0, 1, linear=False)
-    t = numpy.array([0.5])
-    c = cmix(t)
-    b = (c == (0.5, 0, 0.5, 1)).all()
-    return b
-## colormix - can take hex string color aruments
-def cm_cos2_hexCol():
-    cmix = colormix.cosine2('#ff0000', '#0000ff', 0, 1, linear=False)
-    t = numpy.array([0.5])
-    c = cmix(t)
-    b = (c == (0.5, 0, 0.5, 1)).all()
-    return b
-## colormix - can take mixed color values
-def cm_cos2_mixedCol():
-    cmix = colormix.cosine2('r', (0,0,1), 0, 1, linear=False)
-    t = numpy.array([0.5])
-    c = cmix(t)
-    b = (c == (0.5, 0, 0.5, 1)).all()
-    return b
-## colormix - can take numpy arr as parameter value
-def cm_cos2_arrParam():
-    cmix = colormix.cosine2((1,0,0,0), (0,0,1,1), 0, 1, linear=False)
-    t = cmix(numpy.linspace(0,1,3))
-    t2 = numpy.ndarray((3,4))
-    t2[0] = (1, 0, 0, 0)
-    t2[1] = (0.5, 0, 0.5, 0.5)
-    t2[2] = (0, 0, 1, 1)
-    b = (t == t2).all()
-    return b
-## colormix - can take arr parameter and different colors when linear=True
-def cm_cos2_arrParamLinear():
-    cmix = colormix.cosine2((1,0,0,0), (0,0,1,1), 0, 1, linear=True)
-    t = cmix(numpy.linspace(0,1,3))
-    t2 = numpy.ndarray((3,4))
-    sqt2 = numpy.sqrt(2)/2
-    t2[0] = (1, 0, 0, 0)
-    t2[1] = (sqt2, 0, sqt2, sqt2)
-    t2[2] = (0, 0, 1, 1)
-    b = (t == t2).all()
+# colormix - fromConstant can take rgb-tuple argument
+def cm_fromConstant_rgbTupleArg():
+    return fromConstant_helper((1,0,0))
+# colormix - fromConstant can take rgba-tuple argument
+def cm_fromConstant_rgbaTupleArg():
+    return fromConstant_helper((1,0,0,1))
+# colormix - fromConstant can take color char argument
+def cm_fromConstant_charArg():
+    return fromConstant_helper('r')
+# colormix - fromConstant can take color string argument
+def cm_fromConstant_stringArg():
+    return fromConstant_helper("red")
+# colormix - fromConstant can take color hex-string argument
+def cm_fromConstant_hexStringArg():
+    return fromConstant_helper("#ff0000")
+# colormix - fromConstant returns a color function unchanged
+def cm_fromConstant_functionArg():
+    colorfunc = colormix.mix2("r", "g", None)
+    colorfunc2 = colormix.fromConstant(colorfunc)
+    b = colorfunc is colorfunc2
     return b
 
-####################
+# mix2 test with HTML hex color and smoothstep
+def cm_mix2_hexcolor_smoothstep_normalColorMix():
+    t = numpy.array([1,3,5])
+    map = colormix.smoothstep(2.,4.)
+    colorfunc = colormix.mix2("#ff0000", "#0000ff", map=map, linear=False)
+    colors = colorfunc(t)
+    colors_ = numpy.array([[ 1, 0,  0, 1]
+                          ,[.5, 0, .5, 1]
+                          ,[ 0, 0,  1, 1]])
+    b = (colors == colors_).all()
+    return b
+def cm_mix2_hexcolor_smoothstep_linearColorMix():
+    t = numpy.array([1,3,5])
+    map = colormix.smoothstep(2.,4.)
+    colorfunc = colormix.mix2("#ff0000", "#0000ff", map=map, linear=True)
+    colors = colorfunc(t)
+    sq2 = numpy.sqrt(2)/2
+    colors_ = numpy.array([[1,   0,   0, 1]
+                          ,[sq2, 0, sq2, 1]
+                          ,[0,   0,   1, 1]])
+    b = (colors == colors_).all()
+    return b
+
+## colormix.smoothstep - returns correct result for some obvious arguments
+def cm_smoothstep_valuesInsideStepDomain():
+    t = numpy.array([2,3.5,5])
+    m = colormix.smoothstep(2,5)
+    v = m(t)
+    b = (v == [0,0.5,1]).all()
+    return b
+def cm_smoothstep_constOutsideStepDomain():
+    t = numpy.array([0,1,2,4,5,6])
+    m = colormix.smoothstep(2,4)
+    v = m(t)
+    b = (v == [0,0,0,1,1,1]).all()
+    return b
+# colormix.cosine - returns correct result for some obvious arguments
+def cm_cosine_values1():
+    t = numpy.arange(0,5)
+    m = colormix.cosine(0,2)
+    v = m(t)
+    v_ = [0, 0.5, 1, 0.5, 0]
+    b = sum(v - v_) < 1e-15
+    return b
+def cm_cosine_values2():
+    t = numpy.array([-4, 0, 4, 8])
+    m = colormix.cosine(0,4)
+    v = m(t)
+    v_ = [1, 0, 1, 0]
+    b = sum(v - v_) < 1e-15
+    return b
+# colormix.gaussian - returns correct result for some obvious arguments
+def cm_gaussian_values1():
+    t = numpy.arange(0,5)
+    m = colormix.gaussian(2,2)
+    v = m(t)
+    v_ = [.0625, .5, 1, .5, .0625]
+    b = sum(v - v_) < 1e-15
+    return b
+def cm_gaussian_values2():
+    t = numpy.array([-1,3,5,7,11])
+    m = colormix.gaussian(5,4)
+    v = m(t)
+    v_ = [2**-9, .5, 1, .5, 2**-9]
+    b = sum(v - v_) < 1e-15
+    return b
+
+
+################################################################################
 ## misc test cases
+##
 
 # permute - does not produce an array with duplicate entries
 def misc_permute_nonDuplicateEntries():
@@ -121,7 +158,7 @@ def tb_curveColorConst():
 
 ## draw variable color curve
 def tb_curveColorVar():
-    cm = colormix.cosine2("b", "r", 0, tb.tau/2, linear=True)
+    cm = colormix.mix2("b", "r", cosine(0, tb.tau/2), linear=True)
     bundle = tb.TaylorBundle(
           filename = "test/tb_curveColorVar"
         , curve = curve.Trochoid(-5, 0.6, 0)
@@ -193,7 +230,7 @@ def tb_curveAndTangentInFullDomain():
 # draw tangents with variable alpha value - high when the sin is
 # increasing, and low when it's decreasing. 
 def tb_variableTanAlpha_highWhenIncreasing():
-    mix = colormix.cosine2([1,0,0,1], [1,0,0,0], 0, numpy.pi)
+    mix = colormix.mix2([1,0,0,1], [1,0,0,0], cosine(0, numpy.pi))
     bundle = tb.TaylorBundle(
           filename = "test/tb_variableTanAlpha_highWhenIncreasing"
         , curve = curve.Curve(lambda x: x, numpy.sin)
@@ -212,7 +249,7 @@ def tb_variableTanAlpha_highWhenIncreasing():
 # draw curve with variable alpha value - high when the sin is
 # increasing, and low when it's decreasing.
 def tb_variableCurveAlpha_highWhenIncreasing():
-    mix = colormix.cosine2([1,1,1,1], [1,1,1,0], 0, numpy.pi)
+    mix = colormix.mix2([1,1,1,1], [1,1,1,0], cosine(0, numpy.pi))
     bundle = tb.TaylorBundle(
           filename = "test/tb_variableCurveAlpha_highWhenIncreasing"
         , curve = curve.Curve(lambda x: x, numpy.sin)
@@ -230,7 +267,7 @@ def tb_variableCurveAlpha_highWhenIncreasing():
     return True
 # tanalpha should ovveride alpha values in tancol arg (variable or not)
 def tb_blankImage2():
-    mix = colormix.cosine2([1,0,0,1], [1,0,0,0], 0, numpy.pi)
+    mix = colormix.mix2([1,0,0,1], [1,0,0,0], cosine(0, numpy.pi))
     bundle = tb.TaylorBundle(
           filename = "test/tb_blankImage2"
         , curve = curve.Curve(lambda x: x, numpy.sin)
@@ -264,7 +301,7 @@ def tb_blankImage3():
     return True
 # curveAlpha should override alpha values in (variable) curvecol arg
 def tb_blankImage4():
-    mix = colormix.cosine2([1,1,1,1], [1,1,1,0], 0, numpy.pi)
+    mix = colormix.mix2([1,1,1,1], [1,1,1,0], cosine(0, numpy.pi))
     bundle = tb.TaylorBundle(
           filename = "test/tb_blankImage4"
         , curve = curve.Curve(lambda x: x, numpy.sin)
@@ -297,11 +334,11 @@ def tb_unidirectioanlTangents():
     return True
     
 # draw a thick colored line - normal color mixing
-def cm_cos2_normalColorGradient():
+def cm_cos2_normalColorGradient_rgRgr():
     c = curve.fromFunction(lambda x: numpy.zeros(x.shape))
-    mix = colormix.cosine2("r", "g", 0, 1, linear = False)
+    mix = colormix.mix2("r", "g", cosine(0, 1), linear = False)
     bundle = tb.TaylorBundle(
-          filename = "test/cm_cos2_normalColorGradient"
+          filename = "test/cm_cos2_normalColorGradient_rgRgr"
         , curve = c
         , curvecol = mix
         , showcurve = True
@@ -315,11 +352,11 @@ def cm_cos2_normalColorGradient():
     bundle.render()
     return True
 # draw a thick colored line - linear color mixing
-def cm_cos2_linearColorGradient():
+def cm_cos2_linearColorGradient_rgRgr():
     c = curve.fromFunction(lambda x: numpy.zeros(x.shape))
-    mix = colormix.cosine2("r", "g", 0, 1, linear = True)
+    mix = colormix.mix2("r", "g", cosine(0, 1), linear = True)
     bundle = tb.TaylorBundle(
-          filename = "test/cm_cos2_linearColorGradient"
+          filename = "test/cm_cos2_linearColorGradient_rgRgr"
         , curve = c
         , curvecol = mix
         , showcurve = True
@@ -333,12 +370,12 @@ def cm_cos2_linearColorGradient():
     bundle.render()
     return True
 # color mixing can take another mixer as argument
-def cm_cos2_threeColorGradient():
+def cm_cos2_threeColorGradient_rybyRybyr():
     c = curve.fromFunction(lambda x: numpy.zeros(x.shape))
-    mix1 = colormix.cosine2("r", "b", 0, 1)
-    mix2 = colormix.cosine2(mix1, "gold", 0, 0.5)
+    mix1 = colormix.mix2("r", "b",     cosine(0, 1))
+    mix2 = colormix.mix2(mix1, "gold", cosine(0, 0.5))
     bundle = tb.TaylorBundle(
-          filename = "test/cm_cos2_threeColorGradient"
+          filename = "test/cm_cos2_threeColorGradient_rybyRybyr"
         , curve = c
         , curvecol = mix2
         , showcurve = True
@@ -351,12 +388,48 @@ def cm_cos2_threeColorGradient():
         )
     bundle.render()
     return True
-# gaussian can take another mixer as color arg, and can produce the right
-# result; a single peak of color on a given background.
+
+# gaussin colormix base cases
+def cm_gaussian_redWithBluePeakLinear():
+    c = curve.fromFunction(lambda x: numpy.zeros(x.shape))
+    mix = colormix.mix2("red", "dodgerBlue", gaussian(0.5, 0.1), linear=True)
+    bundle = tb.TaylorBundle(
+          filename = "test/cm_gaussian_redWithBluePeakLinear"
+        , curve = c
+        , curvecol = mix
+        , showcurve = True
+        , curvelw = 72 * 2
+        , curveres = 481
+        , window = [0, 1, -1, 1]
+        , domain = [0, 1]
+        , n_tan = 0
+        , dpi = 30
+        )
+    bundle.render()
+    return True
+def cm_gaussian_redWithBluePeakNormal():
+    c = curve.fromFunction(lambda x: numpy.zeros(x.shape))
+    mix = colormix.mix2("red", "dodgerBlue", gaussian(0.5, 0.1), linear=False)
+    bundle = tb.TaylorBundle(
+          filename = "test/cm_gaussian_redWithBluePeakNormal"
+        , curve = c
+        , curvecol = mix
+        , showcurve = True
+        , curvelw = 72 * 2
+        , curveres = 481
+        , window = [0, 1, -1, 1]
+        , domain = [0, 1]
+        , n_tan = 0
+        , dpi = 30
+        )
+    bundle.render()
+    return True
+
+# gaussian can take another mixer as color arg,
 def cm_gaussian_redWithPeaksLeftWideRightThin():
     c = curve.fromFunction(lambda x: numpy.zeros(x.shape))
-    mix1 = colormix.gaussian("dodgerBlue", "red", -0.5, 0.4)
-    mix2 = colormix.gaussian("dodgerblue", mix1, 0.5, 0.1)
+    mix1 = colormix.mix2("red", "dodgerBlue", gaussian(-0.5, 0.4))
+    mix2 = colormix.mix2(mix1,  "dodgerblue", gaussian( 0.5, 0.1))
     bundle = tb.TaylorBundle(
           filename = "test/cm_gaussian_redWithPeaksLeftWideRightThin"
         , curve = c
@@ -371,29 +444,11 @@ def cm_gaussian_redWithPeaksLeftWideRightThin():
         )
     bundle.render()
     return True
-# gaussian can take another mixer as color arg, and can take `linear` arg
-def cm_gaussian_redWithPeaksLeftLinearRightNormal():
-    c = curve.fromFunction(lambda x: numpy.zeros(x.shape))
-    mix1 = colormix.gaussian("dodgerBlue", "red", -0.5, 0.2, linear=True)
-    mix2 = colormix.gaussian("dodgerblue", mix1, 0.5, 0.2, linear=False)
-    bundle = tb.TaylorBundle(
-          filename = "test/cm_gaussian_redWithPeaksLeftLinearRightNormal"
-        , curve = c
-        , curvecol = mix2
-        , showcurve = True
-        , curvelw = 72 * 2
-        , curveres = 481
-        , window = [-1, 1, -1, 1]
-        , domain = [-1, 1]
-        , n_tan = 0
-        , dpi = 30
-        )
-    bundle.render()
-    return True
+
 # smoothstep basic case
 def cm_smoothstep_redToBlue():
     c = curve.fromFunction(lambda x: numpy.zeros(x.shape))
-    mix = colormix.smoothstep("red", "blue", 1, 2)
+    mix = colormix.mix2("red", "blue", smoothstep(1, 2))
     bundle = tb.TaylorBundle(
           filename = "test/cm_smoothstep_redToBlue"
         , curve = c
@@ -411,8 +466,8 @@ def cm_smoothstep_redToBlue():
 # smoothstep can take another mixer as argument
 def cm_smoothstep_redToGreenToBlue():
     c = curve.fromFunction(lambda x: numpy.zeros(x.shape))
-    mix1 = colormix.smoothstep("red", "green", 2, 3)
-    mix2 = colormix.smoothstep(mix1, "blue", 6, 7)
+    mix1 = colormix.mix2("red", "green", smoothstep(2, 3))
+    mix2 = colormix.mix2(mix1,  "blue",  smoothstep(6, 7))
     bundle = tb.TaylorBundle(
           filename = "test/cm_smoothstep_redToGreenToBlue"
         , curve = c
@@ -461,17 +516,24 @@ def testAll(fs, v=3):
         runtest(f, v=v)
 
 def cm_tests(v=3):
-    testAll( [ cm_cos2_3tupleCol
-             , cm_cos2_4tupleCol
-             , cm_cos2_charCol
-             , cm_cos2_strCol
-             , cm_cos2_hexCol
-             , cm_cos2_mixedCol
-             , cm_cos2_arrParam
-             , cm_cos2_arrParamLinear
+    testAll( [ cm_fromConstant_rgbTupleArg
+             , cm_fromConstant_rgbaTupleArg
+             , cm_fromConstant_charArg
+             , cm_fromConstant_stringArg
+             , cm_fromConstant_hexStringArg
+             , cm_fromConstant_functionArg
+             , cm_mix2_hexcolor_smoothstep_normalColorMix
+             , cm_mix2_hexcolor_smoothstep_linearColorMix
+             , cm_smoothstep_valuesInsideStepDomain
+             , cm_smoothstep_constOutsideStepDomain
+             , cm_cosine_values1
+             , cm_cosine_values2
+             , cm_gaussian_values1
+             , cm_gaussian_values2
              ]
            , v = v
            )
+
 def misc_tests(v=3):
     testAll( [ misc_permute_nonDuplicateEntries
              , misc_permute_rightOrder
@@ -491,11 +553,12 @@ def render_tests(v=3):
              , tb_variableTanAlpha_highWhenIncreasing
              , tb_variableCurveAlpha_highWhenIncreasing
              , tb_unidirectioanlTangents
-             , cm_cos2_normalColorGradient
-             , cm_cos2_linearColorGradient
-             , cm_cos2_threeColorGradient
+             , cm_cos2_normalColorGradient_rgRgr
+             , cm_cos2_linearColorGradient_rgRgr
+             , cm_cos2_threeColorGradient_rybyRybyr
+             , cm_gaussian_redWithBluePeakLinear
+             , cm_gaussian_redWithBluePeakNormal
              , cm_gaussian_redWithPeaksLeftWideRightThin
-             , cm_gaussian_redWithPeaksLeftLinearRightNormal
              , cm_smoothstep_redToBlue
              , cm_smoothstep_redToGreenToBlue
              ]

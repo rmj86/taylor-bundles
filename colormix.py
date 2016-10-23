@@ -15,63 +15,53 @@ def fromConstant(color):
             return full(t.shape+(4,), c_arr)
         return const_color
 
-def smoothstep(color1, color2, start, end, linear = True):
-    def smooth(t): # smooth step from 1 to 0 in the domain (0,1)
-        return 1+t*t*(2*t-3)
+def mix2(color1, color2, map, linear=True):
+    """ retuns a function mix(t) which takes an array of curve
+        parameters and returns an array of rgba-tuples. map is
+        a function from the curve parameter t to values in the
+        range [0,1]. Where the map is 0, shows color1, where
+        the map is 1, shows color2.
+        When linear==True, mix in a linear color space."""
     cfunc1 = fromConstant(color1)
     cfunc2 = fromConstant(color2)
     def mix(t):
-        ts = (t-start)/(end-start)  # t scaled to fit the domain of smooth
-        m = smooth(ts)
-        m[ts<0] = 1 # pure color1 before step
-        m[ts>1] = 0 # pure color2 after step
-        m = m[:, newaxis]
+        m = map(t)[:,newaxis]
         c1 = cfunc1(t)
         c2 = cfunc2(t)
         if linear:
-            return sqrt(m*(c1**2) + (1-m)*(c2**2))
+            return sqrt((1-m)*(c1*c1) + m*(c2*c2))
         else:
-            return m*c1 + (1-m)*c2
+            return (1-m)*c1 + m*c2
     return mix
 
-def cosine2(color1, color2, peak1, peak2, linear=True):
-    """ returns a function mix(t) which mixes colors c1 and c2. c1 and c2
-        are  any valid matplotlib color. E.g. a color char ('r'), a html
-        color name ("red"), a html hex color ("#FF0000") or a 3- or 4-tuple.
-        peak1 is the peak of color1, and peak2 is the peak of color2. Colors are mixed in a linear colorspace by default. Use "normal" colorspace
-        by setting linear=False.
-        The returned mix function takes a numpy array with shape (n,) and
-        returns a numpy array with shape (n,4) - rgba."""
-    period = 2*(peak2-peak1)
-    const = tau/period
-    cfunc1 = fromConstant(color1)
-    cfunc2 = fromConstant(color2)
-    def mix(t):
-        m = 0.5 * (1 + cos((t-peak1) * (tau/period)))
-        m = m[:, newaxis]
-        c1 = cfunc1(t)
-        c2 = cfunc2(t)
-        if linear:
-            return sqrt(m*(c1**2) + (1-m)*(c2**2))
-        else:
-            return m*c1 + (1-m)*c2
-    return mix
+def smoothstep(u, v):
+    """ A smooth step from 0 to 1 in the domain [u,v]. When
+        t<u, is constant 0. When v<t, is constant 1."""
+    def step(t):
+        ts = (t-u)/(v-u)  # scale t so that [u,v] becomes [0,1]
+        m = ts*ts*(3-2*ts)
+        m[ts<0] = 0
+        m[ts>1] = 1
+        return m
+    return step
 
-def gaussian(color1, color2, center, width, linear=True):
-    """ Mix color1 and color2 according to a gaussian fuinction.
-        There is a single peak of color1 on top of color2, with the
-        given center and width. width is 'full width at half macimum.'"""
-    cfunc1 = fromConstant(color1)
-    cfunc2 = fromConstant(color2)
-    c = width / (2*sqrt(2*log(2)))
-    def mix(t):
-        tc = t-center
-        m = exp((tc*tc) / (-2*c*c))
-        m = m[:, newaxis]
-        c1 = cfunc1(t)
-        c2 = cfunc2(t)
-        if linear:
-            return sqrt(m*(c1**2) + (1-m)*(c2**2))
-        else:
-            return m*c1 + (1-m)*c2
-    return mix
+def cosine(p1, p2):
+    """ A cosine curve oscillating between 0 and 1. It is 0
+        where t=p1, 1 where t=p2, and has period 2*(p2-p1). """
+    period = 2*(p2-p1)
+    const = tau/period # ???
+    def oscillator(t):
+        ts = pi/(p2-p1) * (p1-t) # scale t so [p1,p2] becomes [0,pi]
+        m = 0.5 * (1 - cos(ts))
+        return m
+    return oscillator
+
+def gaussian(c, w):
+    """ A gaussian curve with it's peak at c and width w.
+        Width refers to it's "full width at half maximum"."""
+    s = 2*sqrt(log(2)) / w  # scaling factor for t
+    def bellcurve(t):
+        ts = (t-c)*s  # t scaled so that [c-w, c+w] is FWHM range
+        m = exp(-ts*ts)
+        return m
+    return bellcurve

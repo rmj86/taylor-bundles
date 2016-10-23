@@ -12,9 +12,10 @@ def mix(t):
     (xmin, xmax) = (-3./5, 3./5)  # the min and max bounds of x
     delta = xmax - xmin
     # first, make a red-to-blue color gradient from xmin to xmax
-    mix_gradient = colormix.cosine2("r", "b", xmin, xmax)
+    mix_gradient = colormix.mix2("r", "b", colormix.cosine(xmin, xmax))
     # on top of that, make a peak of gold around x=0 with width delta/6
-    mix_peak = colormix.gaussian("gold", mix_gradient, 0, delta/3)
+    mix_peak = colormix.mix2(mix_gradient, "gold",
+                             colormix.gaussian(0, delta/3))
     # apply the mixer to the x values of the
     # curve instead of the parameter values
     colors = mix_peak( c.x(t) )
