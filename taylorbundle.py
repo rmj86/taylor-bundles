@@ -56,7 +56,7 @@ class TaylorBundle:
     showcurve = True  # show the generating curve on top of the tangent bundle
     curveres = 256           # resolution of generating curve
     curvecol = "w"           # colour of generating curve
-    curvelw = 2              # line width of generating curve
+    curvelw = 6              # line width of generating curve
     curvealpha = None        # transparency of generating curve
     tandomain = [-2, 2]      # domain of tangent polynomial (around the point of tangency)
     tanres = 256             # resolution of tangent curves
@@ -184,3 +184,15 @@ class TaylorBundle:
         if not self.keep_partials:
             for fn in partial_filenames:
                 misc.deleteFile(fn)
+
+    def renderTancolorLegend(self):
+        tb = copy.copy(self)
+        tb.set_options(
+              showcurve=True
+            , curvecol = self.tancol
+            , n_tan = 0 )
+        if type(self.filename) == str:
+            tb.set_options( filename = self.filename + "_tancolorLegend")
+        else:
+            tb.set_options( filename = misc.datetimeFilename("taylorbundle_tancolorLegend_") )
+        tb.render()
