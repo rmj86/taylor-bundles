@@ -5,7 +5,9 @@ import numpy
 
 c = curve.Lissajous(5, 3, 3./5, 5./5, numpy.pi/4)
 
-# by default the color mixer is passed 
+# By default the color mixer is passed the curve parameter values as an
+# argument. Here we set up a custom function that instead calculates the
+# color as a function of the curve's x values.
 def mix(t):
     x = c.x(t)   # the x values of the curve
     (xmin, xmax) = (-3./5, 3./5)  # the min and max bounds of x
@@ -19,23 +21,13 @@ def mix(t):
     colors = mix_peak( c.x(t) )
     return colors
 
-# set up and render a legend for the coloring
+# set the TB properties
 tb = taylorbundle.TaylorBundle(
       curve = c
-    , filename = "renders/example_lissajous_colorlegend"
+    , filename = "renders/example_lissajous"
     , window = [-4, 4, -2.25, 2.25]
     , figsize = [16, 9]
-    , showcurve = True
-    , curvelw = 6
-    , curvecol = mix
-    , n_tan = 0
     , dpi = 30
-    )
-tb.render()
-
-# set up and render the Taylor bundle
-tb.set_options(
-      filename = "renders/example_lissajous_k"
     , showcurve = False
     , n_part = 8
     , n_tan = 500
@@ -45,4 +37,8 @@ tb.set_options(
     , tandomain = [-1, 1]
     , degree = 7
     )
+
+# render a legend for the tangent coloring
+tb.renderTancolorLegend()
+# render the Taylor bundle
 tb.render()

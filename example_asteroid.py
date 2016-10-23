@@ -1,8 +1,9 @@
-# Example of taylor bundle rendering. Asteriod-like hypotrochoid curve,
-# with it's 5th degree TB. First it's user-defined and rendered with the
+# Example of taylor bundle rendering. "Asteriod curve" as generating curve,
+# with it's 5th degree TB. First it is user-defined and rendered using the
 # default, numeric differentiation. Then it's rendered with the predefined
-# Trochoid class, with exact differentiation. In this case, it is evident
-# that numerical differnetiation makes no difference on the result.
+# Trochoid class, using exact differentiation. In this case, it is evident
+# that numerical differnetiation makes no appreiable difference on the
+# result.
 
 import curve
 import taylorbundle
@@ -48,3 +49,8 @@ tb.set_options(
     , curve = c_exact
     )
 tb.render()
+
+# Finally, render the color legend
+
+tb.set_options( filename = "renders/example_asteroid" )
+tb.renderTancolorLegend()

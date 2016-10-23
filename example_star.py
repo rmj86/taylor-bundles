@@ -15,8 +15,8 @@ color2 = (0.2, 0, 0)   # reddish black
 # periodic gradient with color1 around t=0 and color2 around t=tau/10
 mix = colormix.cosine2(color1, color2, 0, tau/10)
 tb = taylorbundle.TaylorBundle(
-      filename = "renders/example_star"
-    , curve = c
+      curve = c
+    , filename = "renders/example_star"
     , showcurve = False
     , window = [-5/sqrt(2), 19/sqrt(2), -4, 20]
     , figsize = [8.267, 11.692]   # size of an A4 paper
@@ -31,4 +31,5 @@ tb = taylorbundle.TaylorBundle(
     , dpi = 30
     )
 
+tb.renderTancolorLegend()
 tb.render()
