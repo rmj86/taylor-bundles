@@ -4,6 +4,8 @@
 # rendered images
 **/*.png
 !figures/*.png
+!renders/*.png
+
 
 # Windows shortcuts
 *.lnk
