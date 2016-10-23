@@ -14,49 +14,49 @@ import numpy
 
 ## colormix - can take rgb tuple as color value
 def cm_cos2_3tupleCol():
-    cmix = colormix.cosine2((1,0,0),(0,0,1),0,1)
+    cmix = colormix.cosine2((1,0,0),(0,0,1),0,1, linear=False)
     t = numpy.array([0.5])
     c = cmix(t)
     b = (c == (0.5, 0, 0.5, 1)).all()
     return b
 ## colormix - can take rgba colors
 def cm_cos2_4tupleCol():
-    cmix = colormix.cosine2((1,0,0,0), (0,0,1,1), 0, 1)
+    cmix = colormix.cosine2((1,0,0,0), (0,0,1,1), 0, 1, linear=False)
     t = numpy.array([0.5])
     c = cmix(t)
     b = (c == (0.5, 0, 0.5, 0.5)).all()
     return b
 ## colormix - can take matplotlib color char as color value
 def cm_cos2_charCol():
-    cmix = colormix.cosine2('r', 'b', 0, 1)
+    cmix = colormix.cosine2('r', 'b', 0, 1, linear=False)
     t = numpy.array([0.5])
     c = cmix(t)
     b = (c == (0.5, 0, 0.5, 1)).all()
     return b
 ## colormix - can take matplotlib color string as color value
 def cm_cos2_strCol():
-    cmix = colormix.cosine2('red', 'blue', 0, 1)
+    cmix = colormix.cosine2('red', 'blue', 0, 1, linear=False)
     t = numpy.array([0.5])
     c = cmix(t)
     b = (c == (0.5, 0, 0.5, 1)).all()
     return b
 ## colormix - can take hex string color aruments
 def cm_cos2_hexCol():
-    cmix = colormix.cosine2('#ff0000', '#0000ff', 0, 1)
+    cmix = colormix.cosine2('#ff0000', '#0000ff', 0, 1, linear=False)
     t = numpy.array([0.5])
     c = cmix(t)
     b = (c == (0.5, 0, 0.5, 1)).all()
     return b
 ## colormix - can take mixed color values
 def cm_cos2_mixedCol():
-    cmix = colormix.cosine2('r', (0,0,1), 0, 1)
+    cmix = colormix.cosine2('r', (0,0,1), 0, 1, linear=False)
     t = numpy.array([0.5])
     c = cmix(t)
     b = (c == (0.5, 0, 0.5, 1)).all()
     return b
 ## colormix - can take numpy arr as parameter value
 def cm_cos2_arrParam():
-    cmix = colormix.cosine2((1,0,0,0), (0,0,1,1), 0, 1)
+    cmix = colormix.cosine2((1,0,0,0), (0,0,1,1), 0, 1, linear=False)
     t = cmix(numpy.linspace(0,1,3))
     t2 = numpy.ndarray((3,4))
     t2[0] = (1, 0, 0, 0)
@@ -299,16 +299,16 @@ def tb_unidirectioanlTangents():
 # draw a thick colored line - normal color mixing
 def cm_cos2_normalColorGradient():
     c = curve.fromFunction(lambda x: numpy.zeros(x.shape))
-    mix = colormix.cosine2("r", "g", -1, 1, linear = False)
+    mix = colormix.cosine2("r", "g", 0, 1, linear = False)
     bundle = tb.TaylorBundle(
           filename = "test/cm_cos2_normalColorGradient"
         , curve = c
         , curvecol = mix
         , showcurve = True
-        , curvelw = 72 * 4.5
-        , curveres = 100
-        , window = [-1.1, 1.1, -1, 1]
-        , domain = [-1, 1]
+        , curvelw = 72 * 2
+        , curveres = 481
+        , window = [0, 4, -1, 1]
+        , domain = [0, 4]
         , n_tan = 0
         , dpi = 30
         )
@@ -317,16 +317,16 @@ def cm_cos2_normalColorGradient():
 # draw a thick colored line - linear color mixing
 def cm_cos2_linearColorGradient():
     c = curve.fromFunction(lambda x: numpy.zeros(x.shape))
-    mix = colormix.cosine2("r", "g", -1, 1, linear = True)
+    mix = colormix.cosine2("r", "g", 0, 1, linear = True)
     bundle = tb.TaylorBundle(
           filename = "test/cm_cos2_linearColorGradient"
         , curve = c
         , curvecol = mix
         , showcurve = True
-        , curvelw = 72 * 4.5
-        , curveres = 100
-        , window = [-1.1, 1.1, -1, 1]
-        , domain = [-1, 1]
+        , curvelw = 72 * 2
+        , curveres = 481
+        , window = [0, 4, -1, 1]
+        , domain = [0, 4]
         , n_tan = 0
         , dpi = 30
         )
@@ -335,17 +335,17 @@ def cm_cos2_linearColorGradient():
 # color mixing can take another mixer as argument
 def cm_cos2_threeColorGradient():
     c = curve.fromFunction(lambda x: numpy.zeros(x.shape))
-    mix1 = colormix.cosine2("r", "b", -1, 1)
-    mix2 = colormix.cosine2("gold", mix1, 0, 1)
+    mix1 = colormix.cosine2("r", "b", 0, 1)
+    mix2 = colormix.cosine2(mix1, "gold", 0, 0.5)
     bundle = tb.TaylorBundle(
           filename = "test/cm_cos2_threeColorGradient"
         , curve = c
         , curvecol = mix2
         , showcurve = True
-        , curvelw = 72 * 4.5
-        , curveres = 100
-        , window = [-1.1, 1.1, -1, 1]
-        , domain = [-1, 1]
+        , curvelw = 72 * 2
+        , curveres = 481
+        , window = [-0, 4, -1, 1]
+        , domain = [-0, 4]
         , n_tan = 0
         , dpi = 30
         )
@@ -355,16 +355,16 @@ def cm_cos2_threeColorGradient():
 # result; a single peak of color on a given background.
 def cm_gaussian_redWithPeaksLeftWideRightThin():
     c = curve.fromFunction(lambda x: numpy.zeros(x.shape))
-    mix1 = colormix.gaussian("dodgerBlue", "red", -0.4, 0.3)
-    mix2 = colormix.gaussian("dodgerblue", mix1, 0.6, 0.1)
+    mix1 = colormix.gaussian("dodgerBlue", "red", -0.4, 0.2)
+    mix2 = colormix.gaussian("dodgerblue", mix1, 0.6, 0.05)
     bundle = tb.TaylorBundle(
           filename = "test/cm_gaussian_redWithPeaksLeftWideRightThin"
         , curve = c
         , curvecol = mix2
         , showcurve = True
-        , curvelw = 72 * 4.5
-        , curveres = 100
-        , window = [-1.1, 1.1, -1, 1]
+        , curvelw = 72 * 2
+        , curveres = 481
+        , window = [-1, 1, -1, 1]
         , domain = [-1, 1]
         , n_tan = 0
         , dpi = 30
@@ -374,16 +374,16 @@ def cm_gaussian_redWithPeaksLeftWideRightThin():
 # gaussian can take another mixer as color arg, and can tale `linear` arg
 def cm_gaussian_redWithPeaksLeftLinearRightNormal():
     c = curve.fromFunction(lambda x: numpy.zeros(x.shape))
-    mix1 = colormix.gaussian("dodgerBlue", "red", -0.6, 0.15, linear=True)
-    mix2 = colormix.gaussian("dodgerblue", mix1, 0.6, 0.15, linear=False)
+    mix1 = colormix.gaussian("dodgerBlue", "red", -0.5, 0.1, linear=True)
+    mix2 = colormix.gaussian("dodgerblue", mix1, 0.5, 0.1, linear=False)
     bundle = tb.TaylorBundle(
           filename = "test/cm_gaussian_redWithPeaksLeftLinearRightNormal"
         , curve = c
         , curvecol = mix2
         , showcurve = True
-        , curvelw = 72 * 4.5
-        , curveres = 100
-        , window = [-1.1, 1.1, -1, 1]
+        , curvelw = 72 * 2
+        , curveres = 481
+        , window = [-1, 1, -1, 1]
         , domain = [-1, 1]
         , n_tan = 0
         , dpi = 30
@@ -444,16 +444,16 @@ def misc_tests(v=3):
 
 def render_tests(v=3):
     testAll( [ tb_curveColorConst
-             , tb_curveColorVar
-             , tb_blankImage
-             , tb_blankImage2
-             , tb_blankImage3
-             , tb_blankImage4
-             , tb_tangentsOnTheLeft
-             , tb_curveAndTangentInFullDomain
-             , tb_variableTanAlpha_highWhenIncreasing
-             , tb_variableCurveAlpha_highWhenIncreasing
-             , tb_unidirectioanlTangents
+             # , tb_curveColorVar
+             # , tb_blankImage
+             # , tb_blankImage2
+             # , tb_blankImage3
+             # , tb_blankImage4
+             # , tb_tangentsOnTheLeft
+             # , tb_curveAndTangentInFullDomain
+             # , tb_variableTanAlpha_highWhenIncreasing
+             # , tb_variableCurveAlpha_highWhenIncreasing
+             # , tb_unidirectioanlTangents
              , cm_cos2_normalColorGradient
              , cm_cos2_linearColorGradient
              , cm_cos2_threeColorGradient
