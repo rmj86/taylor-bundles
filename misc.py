@@ -23,8 +23,8 @@ def timed(showargs=True):
         return _timed_func
     return _timed
 
-def generate_filename():
-    filename = time.strftime("taylorbundle_render_%Y-%m-%d_%H-%M-%S")
+def datetimeFilename(pre="", dateformat="%Y-%m-%d_%H-%M-%S", post=""):
+    filename = "{}{}{}".format(pre, time.strftime(dateformat), post)
     return filename
 
 def deleteFile(fname):

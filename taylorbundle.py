@@ -30,6 +30,7 @@ import curve
 import types
 from matplotlib.collections import LineCollection
 from matplotlib.colors import colorConverter
+import copy
 
 tau = 2 * numpy.pi
 
@@ -49,8 +50,8 @@ class TaylorBundle:
     curvedomain = (0, tau)   # domain of generating curve
     bundledomain = (0, tau)  # domain of tangent bundle
     figsize = (16,9)         # size of image (in inches)
-    dpi = 120                # dpi of image
-    window = [0, tau, -2, 2] # bounds of the plotting surface
+    dpi = 30                 # dpi of image
+    window = [-16,16,-9,9]   # bounds of the plotting surface
     facecolor = 'k'          # background colour of plotting surface
     showcurve = True  # show the generating curve on top of the tangent bundle
     curveres = 256           # resolution of generating curve
@@ -60,7 +61,7 @@ class TaylorBundle:
     tandomain = [-2, 2]      # domain of tangent polynomial (around the point of tangency)
     tanres = 256             # resolution of tangent curves
     tancol = "r"  # colour of tangents. Can be constant or generating function
-    tanlw = 0.2              # line width of tangents
+    tanlw = 1                # line width of tangents
     tanalpha = None          # tranparency of tangents
     filename = None          # file name to save to. Defaults to date and time
     keep_partials = False    # keep partial files after render finishes
@@ -152,7 +153,7 @@ class TaylorBundle:
         tmin, tmax = self.bundledomain
         # initialize filename
         if not type(filename) == str:
-            filename = misc.generate_filename()
+            filename = misc.datetimeFilename(pre="taylorbundle_render_")
         # initialize preview options
         if preview:
             n_part = max(1, int(scale * n_part))    # must be int >= 1
