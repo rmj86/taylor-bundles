@@ -1,11 +1,6 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Wed Feb 17 22:45:14 2016
 
-@author: hannes
-"""
-
-from numpy import pi, cos, sqrt, array, newaxis, full, exp, power
+from numpy import pi, cos, sqrt, array, newaxis, full, exp, log
 from matplotlib.colors import colorConverter
 from types import FunctionType
 
@@ -20,20 +15,20 @@ def fromConstant(color):
             return full(t.shape+(4,), c_arr)
         return const_color
     
-def cosine2(color1, color2, u, v, linear=True):
+def cosine2(color1, color2, peak1, peak2, linear=True):
     """ returns a function mix(t) which mixes colors c1 and c2. c1 and c2
         are  any valid matplotlib color. E.g. a color char ('r'), a html
         color name ("red"), a html hex color ("#FF0000") or a 3- or 4-tuple.
-        u is the peak of c1, and v is the peak of c2. To mix in a liear
-        color space, use linear=True.
+        peak1 is the peak of color1, and peak2 is the peak of color2. Colors are mixed in a linear colorspace by default. Use "normal" colorspace
+        by setting linear=False.
         The returned mix function takes a numpy array with shape (n,) and
         returns a numpy array with shape (n,4) - rgba."""
-    period = 2*(v-u)
+    period = 2*(peak2-peak1)
     const = tau/period
     cfunc1 = fromConstant(color1)
     cfunc2 = fromConstant(color2)
     def mix(t):
-        m = 0.5 * (1 + cos((t-u) * (tau/period)))
+        m = 0.5 * (1 + cos((t-peak1) * (tau/period)))
         m = m[:, newaxis]
         c1 = cfunc1(t)
         c2 = cfunc2(t)
@@ -43,14 +38,16 @@ def cosine2(color1, color2, u, v, linear=True):
             return m*c1 + (1-m)*c2
     return mix
 
-def gaussian(color1, color2, mu, sigma, linear=True):
+def gaussian(color1, color2, center, width, linear=True):
     """ Mix color1 and color2 according to a gaussian fuinction.
-        There is a single peak of color1 on top of color2, with
-        center mu and width sigma. """
+        There is a single peak of color1 on top of color2, with the
+        given center and width. width is 'full width at half macimum.'"""
     cfunc1 = fromConstant(color1)
     cfunc2 = fromConstant(color2)
+    c = width / (2*sqrt(2*log(2)))
     def mix(t):
-        m = exp(-power(t - mu, 2.) / (2 * power(sigma, 2.)))
+        tc = t-center
+        m = exp((tc*tc) / (-2*c*c))
         m = m[:, newaxis]
         c1 = cfunc1(t)
         c2 = cfunc2(t)
