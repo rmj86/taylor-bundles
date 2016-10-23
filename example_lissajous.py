@@ -9,13 +9,12 @@ c = curve.Lissajous(5, 3, 3./5, 5./5, numpy.pi/4)
 # argument. Here we set up a custom function that instead calculates the
 # color as a function of the curve's x values.
 def mix(t):
-    x = c.x(t)   # the x values of the curve
     (xmin, xmax) = (-3./5, 3./5)  # the min and max bounds of x
     delta = xmax - xmin
     # first, make a red-to-blue color gradient from xmin to xmax
     mix_gradient = colormix.cosine2("r", "b", xmin, xmax)
     # on top of that, make a peak of gold around x=0 with width delta/6
-    mix_peak = colormix.gaussian("gold", mix_gradient, 0, delta/6)
+    mix_peak = colormix.gaussian("gold", mix_gradient, 0, delta/3)
     # apply the mixer to the x values of the
     # curve instead of the parameter values
     colors = mix_peak( c.x(t) )

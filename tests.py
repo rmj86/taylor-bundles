@@ -112,7 +112,7 @@ def tb_curveColorConst():
         , curvelw = 10
         , curvecol = 'w'
         , showcurve = True
-        , n_tan = 1
+        , n_tan = 0
         , dpi = 30
         , window = [-4,4,-2.25,2.25]
         )
@@ -355,8 +355,8 @@ def cm_cos2_threeColorGradient():
 # result; a single peak of color on a given background.
 def cm_gaussian_redWithPeaksLeftWideRightThin():
     c = curve.fromFunction(lambda x: numpy.zeros(x.shape))
-    mix1 = colormix.gaussian("dodgerBlue", "red", -0.4, 0.2)
-    mix2 = colormix.gaussian("dodgerblue", mix1, 0.6, 0.05)
+    mix1 = colormix.gaussian("dodgerBlue", "red", -0.5, 0.4)
+    mix2 = colormix.gaussian("dodgerblue", mix1, 0.5, 0.1)
     bundle = tb.TaylorBundle(
           filename = "test/cm_gaussian_redWithPeaksLeftWideRightThin"
         , curve = c
@@ -374,8 +374,8 @@ def cm_gaussian_redWithPeaksLeftWideRightThin():
 # gaussian can take another mixer as color arg, and can tale `linear` arg
 def cm_gaussian_redWithPeaksLeftLinearRightNormal():
     c = curve.fromFunction(lambda x: numpy.zeros(x.shape))
-    mix1 = colormix.gaussian("dodgerBlue", "red", -0.5, 0.1, linear=True)
-    mix2 = colormix.gaussian("dodgerblue", mix1, 0.5, 0.1, linear=False)
+    mix1 = colormix.gaussian("dodgerBlue", "red", -0.5, 0.2, linear=True)
+    mix2 = colormix.gaussian("dodgerblue", mix1, 0.5, 0.2, linear=False)
     bundle = tb.TaylorBundle(
           filename = "test/cm_gaussian_redWithPeaksLeftLinearRightNormal"
         , curve = c
@@ -444,16 +444,16 @@ def misc_tests(v=3):
 
 def render_tests(v=3):
     testAll( [ tb_curveColorConst
-             # , tb_curveColorVar
-             # , tb_blankImage
-             # , tb_blankImage2
-             # , tb_blankImage3
-             # , tb_blankImage4
-             # , tb_tangentsOnTheLeft
-             # , tb_curveAndTangentInFullDomain
-             # , tb_variableTanAlpha_highWhenIncreasing
-             # , tb_variableCurveAlpha_highWhenIncreasing
-             # , tb_unidirectioanlTangents
+             , tb_curveColorVar
+             , tb_blankImage
+             , tb_blankImage2
+             , tb_blankImage3
+             , tb_blankImage4
+             , tb_tangentsOnTheLeft
+             , tb_curveAndTangentInFullDomain
+             , tb_variableTanAlpha_highWhenIncreasing
+             , tb_variableCurveAlpha_highWhenIncreasing
+             , tb_unidirectioanlTangents
              , cm_cos2_normalColorGradient
              , cm_cos2_linearColorGradient
              , cm_cos2_threeColorGradient
@@ -485,5 +485,3 @@ if __name__ == "__main__":
     render_tests(v=v)
     cm_tests(v=v)
     misc_tests(v=v)
-    # cm_gaussian_redWithPeaksLeftWideRightThin()
-    # cm_gaussian_redWithPeaksLeftLinearRightNormal()
