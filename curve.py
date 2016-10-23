@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Mon Feb 15 17:43:23 2016
-
-@author: hannes
-"""
 
 import numpy
 from numpy import sin, cos

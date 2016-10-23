@@ -1,29 +1,16 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Mon Feb 15 17:44:02 2016
 
-@author: hannes
-"""
-
-# import PIL
 import matplotlib
 import numpy
 from misc import timed
 
-#@timed(showargs=False)
 def composeAverage(fname_out, fnames_in):
-    # load images and average them up
     arr0 = matplotlib.pyplot.imread(fnames_in[0])
     imgarrs = (matplotlib.pyplot.imread(fn) for fn in fnames_in[1:])
     for i in imgarrs:
         arr0 += i
     arr0 /= len(fnames_in)
-    # convert to int array
     matplotlib.image.imsave(fname_out, arr0)
-    # intarr = numpy.rint(arr0*255.0).astype(numpy.uint8)
-    # convert to PIL.Image and save. (matplotlib.image.imsave is broken)
-    # img = PIL.Image.fromarray(intarr)
-    # img.save(fname_out)
 
 def analyse(fname):
     # read the data
@@ -48,21 +35,3 @@ def analyse(fname):
     axes[1,2].hist(hsv[:,:,2].flatten(), bins, range=[0,1], log=True, color='k')
     # save and return
     matplotlib.pyplot.savefig("analysis_"+fname)
-
-
-@timed(False)
-def compose_test():
-    fnames = [ "m{}test_partial{}.png".format(i,j) 
-               for i in range(4) 
-               for j in range(16) ]
-    outname = "asdf2.png"
-    composeAverage2(outname, fnames)
-
-@timed()
-def main():
-    for i in range(16):
-        compose_test()
-
-if __name__ == "__main__":    
-    main()
-    
