@@ -4,7 +4,7 @@ import sys
 import taylorbundle as tb
 import curve
 import colormix
-from colormix import smoothstep, cosine, gaussian
+from colormix import normalize, smoothstep, cosine, gaussian
 import misc
 
 import numpy
@@ -44,11 +44,44 @@ def cm_fromConstant_functionArg():
     b = colorfunc is colorfunc2
     return b
 
+# colormix._bounded tests
+def cm__bounded_test1():
+    t = numpy.linspace(0,1,7)
+    s = numpy.linspace(0,1,7)
+    colormix._bounded(t)
+    b = (t==s).all()
+    return b
+def cm__bounded_test2():
+    t = numpy.array([-1, -0.5, 0, 0.5, 1, 1.5, 2])
+    s = numpy.array([ 0,    0, 0, 0.5, 1,   1, 1])
+    b = (colormix._bounded(t) == s).all()
+    return b
+
+# colormix.normalize tests
+def cm_normalize_test1():
+    s = numpy.linspace(0,1,8)
+    t = numpy.linspace(0,1,8)
+    t = colormix.normalize(0,1)(t)
+    b = (s==t).all()
+    return b
+def cm_normalize_test2():
+    s = numpy.linspace(0,1,8)
+    t = numpy.linspace(2,7,8)
+    t = colormix.normalize(2,7)(t)
+    b = sum(numpy.fabs(s - t))
+    return b
+def cm_normalize_test3():
+    s = numpy.linspace(0,1,11)
+    t = numpy.linspace(10,2*numpy.pi,11)
+    t = colormix.normalize(10,2*numpy.pi)(t)
+    b = sum(numpy.fabs(s - t))
+    return b
+
 # mix2 test with HTML hex color and smoothstep
 def cm_mix2_hexcolor_smoothstep_normalColorMix():
     t = numpy.array([1,3,5])
-    map = colormix.smoothstep(2.,4.)
-    colorfunc = colormix.mix2("#ff0000", "#0000ff", map=map, linear=False)
+    norm = colormix.smoothstep(2.,4.)
+    colorfunc = colormix.mix2("#ff0000", "#0000ff", norm, linear=False)
     colors = colorfunc(t)
     colors_ = numpy.array([[ 1, 0,  0, 1]
                           ,[.5, 0, .5, 1]
@@ -57,8 +90,8 @@ def cm_mix2_hexcolor_smoothstep_normalColorMix():
     return b
 def cm_mix2_hexcolor_smoothstep_linearColorMix():
     t = numpy.array([1,3,5])
-    map = colormix.smoothstep(2.,4.)
-    colorfunc = colormix.mix2("#ff0000", "#0000ff", map=map, linear=True)
+    norm = colormix.smoothstep(2.,4.)
+    colorfunc = colormix.mix2("#ff0000", "#0000ff", norm, linear=True)
     colors = colorfunc(t)
     sq2 = numpy.sqrt(2)/2
     colors_ = numpy.array([[1,   0,   0, 1]
@@ -86,14 +119,14 @@ def cm_cosine_values1():
     m = colormix.cosine(0,2)
     v = m(t)
     v_ = [0, 0.5, 1, 0.5, 0]
-    b = sum(v - v_) < 1e-15
+    b = sum(numpy.fabs(v - v_)) < 1e-15
     return b
 def cm_cosine_values2():
     t = numpy.array([-4, 0, 4, 8])
     m = colormix.cosine(0,4)
     v = m(t)
     v_ = [1, 0, 1, 0]
-    b = sum(v - v_) < 1e-15
+    b = sum(numpy.fabs(v - v_)) < 1e-15
     return b
 # colormix.gaussian - returns correct result for some obvious arguments
 def cm_gaussian_values1():
@@ -101,14 +134,14 @@ def cm_gaussian_values1():
     m = colormix.gaussian(2,2)
     v = m(t)
     v_ = [.0625, .5, 1, .5, .0625]
-    b = sum(v - v_) < 1e-15
+    b = sum(numpy.fabs(v - v_)) < 1e-15
     return b
 def cm_gaussian_values2():
     t = numpy.array([-1,3,5,7,11])
     m = colormix.gaussian(5,4)
     v = m(t)
     v_ = [2**-9, .5, 1, .5, 2**-9]
-    b = sum(v - v_) < 1e-15
+    b = sum(numpy.fabs(v - v_)) < 1e-15
     return b
 
 
@@ -334,11 +367,11 @@ def tb_unidirectioanlTangents():
     return True
     
 # draw a thick colored line - normal color mixing
-def cm_cos2_normalColorGradient_rgRgr():
+def cm_cosine_normalColorGradient_rgRgr():
     c = curve.fromFunction(lambda x: numpy.zeros(x.shape))
     mix = colormix.mix2("r", "g", cosine(0, 1), linear = False)
     bundle = tb.TaylorBundle(
-          filename = "test/cm_cos2_normalColorGradient_rgRgr"
+          filename = "test/cm_cosine_normalColorGradient_rgRgr"
         , curve = c
         , curvecol = mix
         , showcurve = True
@@ -352,11 +385,11 @@ def cm_cos2_normalColorGradient_rgRgr():
     bundle.render()
     return True
 # draw a thick colored line - linear color mixing
-def cm_cos2_linearColorGradient_rgRgr():
+def cm_cosine_linearColorGradient_rgRgr():
     c = curve.fromFunction(lambda x: numpy.zeros(x.shape))
     mix = colormix.mix2("r", "g", cosine(0, 1), linear = True)
     bundle = tb.TaylorBundle(
-          filename = "test/cm_cos2_linearColorGradient_rgRgr"
+          filename = "test/cm_cosine_linearColorGradient_rgRgr"
         , curve = c
         , curvecol = mix
         , showcurve = True
@@ -370,12 +403,12 @@ def cm_cos2_linearColorGradient_rgRgr():
     bundle.render()
     return True
 # color mixing can take another mixer as argument
-def cm_cos2_threeColorGradient_rybyRybyr():
+def cm_cosine_threeColorGradient_rybyRybyr():
     c = curve.fromFunction(lambda x: numpy.zeros(x.shape))
     mix1 = colormix.mix2("r", "b",     cosine(0, 1))
     mix2 = colormix.mix2(mix1, "gold", cosine(0, 0.5))
     bundle = tb.TaylorBundle(
-          filename = "test/cm_cos2_threeColorGradient_rybyRybyr"
+          filename = "test/cm_cosine_threeColorGradient_rybyRybyr"
         , curve = c
         , curvecol = mix2
         , showcurve = True
@@ -445,6 +478,25 @@ def cm_gaussian_redWithPeaksLeftWideRightThin():
     bundle.render()
     return True
 
+# normalize / "sharpstep" basic case
+def cm_normalize_redToBlue():
+    c = curve.fromFunction(lambda x: numpy.zeros(x.shape))
+    mix = colormix.mix2("red", "blue", normalize(1, 2))
+    bundle = tb.TaylorBundle(
+          filename = "test/cm_normalize_redToBlue"
+        , curve = c
+        , curvecol = mix
+        , showcurve = True
+        , curvelw = 72 * 2
+        , curveres = 481
+        , window = [0, 3, -1, 1]
+        , domain = [0, 3]
+        , n_tan = 0
+        , dpi = 30
+        )
+    bundle.render()
+    return True
+
 # smoothstep basic case
 def cm_smoothstep_redToBlue():
     c = curve.fromFunction(lambda x: numpy.zeros(x.shape))
@@ -483,6 +535,64 @@ def cm_smoothstep_redToGreenToBlue():
     bundle.render()
     return True
 
+# taylorbundle can use matplotlib colormaps
+def cm__matplotlibColormapViridisGradient():
+    import matplotlib
+    c = curve.fromFunction(lambda x: numpy.zeros(x.shape))
+    colors = colormix.colormap("viridis", colormix.normalize(0,9))
+    bundle = tb.TaylorBundle(
+          filename = "test/cm__matplotlibColormapViridisGradient"
+        , curve = c
+        , curvecol = colors
+        , showcurve = True
+        , curvelw = 72 * 2
+        , curveres = 481
+        , window = [0, 9, -1, 1]
+        , domain = [0, 9]
+        , n_tan = 0
+        , dpi = 30
+        )
+    bundle.render()
+    return True
+    
+# the color maps work even when the normalization is out of bounds
+def cm_oob_wideRedBand():
+    c = curve.fromFunction(lambda x: numpy.zeros(x.shape))
+    norm = lambda t: 8 * gaussian(0.5, 0.3)(t) - 4
+    colorfunc = colormix.mix2((0.2,0,0.2), 'r', norm)
+    bundle = tb.TaylorBundle(
+          filename = "test/cm_oob_wideRedBand"
+        , curve = c
+        , curvecol = colorfunc
+        , showcurve = True
+        , curvelw = 72 * 2
+        , curveres = 481
+        , window = [0, 1, -1, 1]
+        , domain = [0, 1]
+        , n_tan = 0
+        , dpi = 30
+        )
+    bundle.render()
+    return True
+def cm_oob_wideViridisBand():
+    c = curve.fromFunction(lambda x: numpy.zeros(x.shape))
+    norm = lambda t: 8 * gaussian(0.5, 0.3)(t) - 4
+    colorfunc = colormix.colormap("viridis", norm)
+    bundle = tb.TaylorBundle(
+          filename = "test/cm_oob_wideViridisBand"
+        , curve = c
+        , curvecol = colorfunc
+        , showcurve = True
+        , curvelw = 72 * 2
+        , curveres = 481
+        , window = [0, 1, -1, 1]
+        , domain = [0, 1]
+        , n_tan = 0
+        , dpi = 30
+        )
+    bundle.render()
+    return True
+
 # TODO: what happens when n_parts is 0?
 
 
@@ -508,7 +618,7 @@ def runtest(f, v=3):
     else:
         if b and v >= 4:
             print "{} succeeded".format(f_name)
-        elif not b and v >= 3:
+        elif not b and v >= 2:
             print "{} FAILED!!!".format(f_name)
 
 def testAll(fs, v=3):
@@ -522,6 +632,11 @@ def cm_tests(v=3):
              , cm_fromConstant_stringArg
              , cm_fromConstant_hexStringArg
              , cm_fromConstant_functionArg
+             , cm__bounded_test1
+             , cm__bounded_test2
+             , cm_normalize_test1
+             , cm_normalize_test2
+             , cm_normalize_test3
              , cm_mix2_hexcolor_smoothstep_normalColorMix
              , cm_mix2_hexcolor_smoothstep_linearColorMix
              , cm_smoothstep_valuesInsideStepDomain
@@ -541,7 +656,25 @@ def misc_tests(v=3):
            , v = v
            )
 
-def render_tests(v=3):
+def cm_render_tests(v=3):
+    testAll( [ 
+               cm_normalize_redToBlue
+             , cm_cosine_normalColorGradient_rgRgr
+             , cm_cosine_linearColorGradient_rgRgr
+             , cm_cosine_threeColorGradient_rybyRybyr
+             , cm_gaussian_redWithBluePeakLinear
+             , cm_gaussian_redWithBluePeakNormal
+             , cm_gaussian_redWithPeaksLeftWideRightThin
+             , cm_smoothstep_redToBlue
+             , cm_smoothstep_redToGreenToBlue
+             , cm__matplotlibColormapViridisGradient
+             , cm_oob_wideRedBand
+             , cm_oob_wideViridisBand
+             ]
+           , v = v
+           )
+
+def tb_render_tests(v=3):
     testAll( [ tb_curveColorConst
              , tb_curveColorVar
              , tb_blankImage
@@ -553,14 +686,6 @@ def render_tests(v=3):
              , tb_variableTanAlpha_highWhenIncreasing
              , tb_variableCurveAlpha_highWhenIncreasing
              , tb_unidirectioanlTangents
-             , cm_cos2_normalColorGradient_rgRgr
-             , cm_cos2_linearColorGradient_rgRgr
-             , cm_cos2_threeColorGradient_rybyRybyr
-             , cm_gaussian_redWithBluePeakLinear
-             , cm_gaussian_redWithBluePeakNormal
-             , cm_gaussian_redWithPeaksLeftWideRightThin
-             , cm_smoothstep_redToBlue
-             , cm_smoothstep_redToGreenToBlue
              ]
            , v = v
            )
@@ -584,6 +709,7 @@ if __name__ == "__main__":
         else:
             v = n
 
-    render_tests(v=v)
     cm_tests(v=v)
     misc_tests(v=v)
+    cm_render_tests(v=v)
+    tb_render_tests(v=v)
