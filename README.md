@@ -118,7 +118,7 @@ The following sections have complete information on `TayloBundle`'s options, on 
 
 TODO
 
-#### `taylorbundle.py`
+### `taylorbundle.py`
 
 `taylorbundle` exports two names. First, the class `TaylorBundle` which specifies and renders a Taylor bundle. Second, the circle constant `tau`, because numpy only exports `pi`, and who would want to use that?
 
@@ -188,48 +188,42 @@ keep_partials | False | Keep partial files after render finishes
 
 TODO
 
-#### `curve.py`
+### `curve.py`
 
 `curve.py` exports the following names:
 
-Name |  Description
------|-------------
-Curve        | Curve base class, representing a parametric curve (x(t), y(t)). Initialize with `Curve(x,y)` where `x` and `y` are functions.
-fromFunction | Given a function `f`, return a `Curve` object representing the curve y=f(x), I.e. the parametric curve (t, f(t)).
-Trochoid     | Curve subclass representing a trochoid curve. Can be either an epitrochoid or hypotrochoid depending on parameters. See the docstring for details.
-Lissajous    | Curve sbclass representig a lissajous curve. See docstring for details.
+`Curve(x, y, dx=None, dy=None)`
+
+TODO
+
+`fromFunction(f, dx=None)`
+
+TODO
+
+`Trochoid(R, r, d)`
+
+TODO
+
+`Lissajous(a, b, A, B, delta)`
+
+TODO
+
 
 #### Define Your Own Curves
 
-A curve must inherit from the `Curve` class. `Curve` has the `taylorCurve` method, which is what allows us to draw our Taylor bundles. The curve must also have `x` and `y` attributes. ´x´ and ´y´ must be functions that take numpy `ndarray`s as their input and give `ndarray`s as their output.
+A curve must inherit from the `Curve` class. `Curve` has the `taylorCurve(a, n)` method, which returns a Taylor polynomial curve about t=a of degree n. This method is what allows us to draw Taylor bundles. 
 
-Optionally you can define the attribute ´derivative´ for `x` and `y`, giving the exact derivative in a point. If it is not present, numerical differentiation is used by default. The results can be acceptable. E.g. in `example_asteroid.py` the numeric procedure produces almost exactly the same result as the symbolic one, but this should not be relied upon in general. The applicability depends very much on the nature of the function in question.
+TODO expand on this, with an example of the minimal definition
 
-When calculating an nth order Taylor curve, you must know derivatives of order 1 through n. The `derivative` function takes two arguments, e.g. `def derivative(a, d=1): ...` where `a` is the point to take the derivative and `d` is the order of the derivative.
+### `colormix.py`
 
-Normally you can not set new attributes on library functions. E.g.
-
-```Python
-x = numpy.sin
-x.derivative = ...
-```
-
-raises an `AttributeError`. However it is fine to do with user-defined functions, and if you want to use a simple libraru finction you can just wrap it in a lambda:
-
-```Python
-x = lambda t: numpy.sin(t)
-x.derivative = ...
-```
-
-#### `colormix.py`
-
-A color function must take a numpy ndarray (shape (n,)) of curve parameter values as it's argument, and return an ndarray (shape (n,4)) of RGBA-values. `colormix` supplies two ways of making color functions; `colormap` and `mix2`.
+A color function must take a numpy ndarray (shape `(n,)`) of curve parameter values as it's argument, and return an ndarray (shape `(n,4)`) of RGBA-values. `colormix` supplies two ways of making color functions; `colormap` and `mix2`.
 
 `colormap` takes 2 arguments; the name of a matplotlib colormap, and a normalization function. 
 
 `mix2` takes 3 arguments; 2 color values and a normalization function. It mixes the two colors such that when `norm` is `0` it shows color 1, and when `norm` is `1` it shows color 2. It takes an optional kwarg `linear` (by default `True`) whereby you can mix the colors in a linear color space.
 
-A normalization function should take a numpy array of numbers and return a numpy array of the same size, whre each element has been mapped to a float in the unit range [0,1]. If the normalized values fall outside the unit range, `colormap`/`mix` will truncate them towards the closest numer inside it.
+A normalization function should take a numpy `ndarray` of numbers and return an `ndarray` of the same size, where each element is a float in the unit range [0,1]. If the normalized values fall outside the unit range, `colormap`/`mix2` will truncate them to `0` or `1`. 
 
 `colormix` supplies 4 normalization functions; `normalize`, `smoothstep`, `cosine`, and `gaussian`. Here are illustrations of how they work.
 
@@ -249,6 +243,3 @@ cfun = colormix.colormap("Spectral", norm)
 
 
 Valid color arguments to `mix2` are: Matplotlib color chars (e.g. `'r'`), html color names (e.g. `"gold"`), HTML hex color strings (e.g. `"#FF8F00"`), RGB-tuples (e.g. `(0,0.5,1)`), RGBA-tuples (e.g. `(0,1,0,0.5)`). It can also take other color functions, meaning you can compose mixers with eachother to create more complex behaviour.
-
-#### Define Your Own Color Mixer TODO
-
