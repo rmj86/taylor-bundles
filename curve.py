@@ -5,57 +5,90 @@ from numpy import sin, cos
 from numpy.polynomial import Polynomial
 from math import factorial
 
-def derivative(f, a, d=1):
-    """ Derivative of function f at point x=a to degree d. Can give exact
-        derivative if f.derivative is defined. Otherwise it defaults to
-        numerical derivative. """
-    if "derivative" in dir(f):
-        return f.derivative(a, d)
-    else:
-        return derivative_numerical(f, a, d)
-
-def derivative_numerical(f, a, d=1, h=0.02):
-    """ Numeric derivative of function f at point x=a.
-        Derivative of degree d, with point sampling distance h. """
-    i = numpy.linspace(-d, d, d+1)
+def numDiff(f, a, n=1, h=0.02):
+    """ Numeric nth derivative of function f at point x=a, using symmetric
+        finite difference method with point sampling distance h. """
+    i = numpy.linspace(-n, n, n+1)
     x = a + (h/2.0)*i
     y = f(x)
-    difference = numpy.diff(y, d)
-    derivative = difference / (h**d)
+    difference = numpy.diff(y, n)
+    derivative = difference / (h**n)
     return derivative[0]
 
-def taylorExpansion(f, a, d=1):
-    """ Taylor polynomial expansion of f(x) around the point x=a to degree d. """
+def taylorPoly(f, a, n=1, df=None):
+    """ Degree n Taylor polynomial of f(x) around the point x=a. """
+    if df is None:
+        df = lambda a, n: numDiff(f, a, n)
     p = Polynomial([0])
-    for i in range(d+1):
+    
+    for i in range(n+1):
         q = Polynomial([-a,1])
         q.maxpower = i
-        p = p + q**i * derivative(f,a,i) / factorial(i)
+        p = p + q**i * df(a,i) / factorial(i)
     return p
 
+
 class Curve:
-    """Parametric 2D curve."""
-    def __init__(self, x, y):
+    """ Parametric 2D curve. """
+    def __init__(self, x, y, dx=None, dy=None):
         self.x = x
         self.y = y
-    def taylorCurve(self, a, d=1):
-        """Approximation of self via Taylor expansion around the point t=a. """
-        px = taylorExpansion(self.x, a, d)
-        py = taylorExpansion(self.y, a, d)
+        if dx is None:
+            def dx(a, n): return numDiff(self.x, a, n)
+        if dy is None:
+            def dy(a, n): return numDiff(self.y, a, n)
+        self.dx = dx
+        self.dy = dy
+    def taylorCurve(self, a, n=1):
+        """ Taylor curve about the point t=a. """
+        px = taylorPoly(self.x, a, n, df=self.dx)
+        py = taylorPoly(self.y, a, n, df=self.dy)
         return Curve(px, py)
+    def __call__(self, t):
+        ps = numpy.ndarray(t.shape+(2,))
+        ps[:,0] = self.x(t)
+        ps[:,1] = self.y(t)
+        return ps
+    def __add__(self, other):
+        def sum_x(t): return self.x(t) + other.x(t)
+        def sum_y(t): return self.y(t) + other.y(t)
+        def sum_dx(a, n): return self.dx(a, n) + other.dx(a, n)
+        def sum_dy(a, n): return self.dy(a, n) + other.dy(a, n)
+        return Curve(sum_x, sum_y, sum_dx, sum_dy)
 
 def fromFunction(f):
     """takes a function  f  and returns a Curve object representing
        the parametric curve  <t, f(t)>"""
     x = lambda t: t
-    y = lambda t: f(t)
-    c = Curve(x, y)
+    # y = lambda t: f(t)
+    # c = Curve(x, y)
+    c = Curve(x, f)
     return c
 
-# the derivatives of sin; cyclic
-sinprime = [sin, cos, lambda x: -sin(x), lambda x: -cos(x)]
-# The derivatives of cos; cyclic
-cosprime = sinprime[1:] + [sinprime[0]]
+sinprime_memo = [sin, cos, lambda x: -sin(x), lambda x: -cos(x)]
+def sinprime(n):
+    """ nth derivative os sin(x). """
+    return sinprime_memo[n%4]
+
+cosprime_memo = [cos, lambda x: -sin(x), lambda x: -cos(x), sin]
+def cosprime(n):
+    """ nth derivative of cos(x). """
+    return cosprime_memo[n%4]
+
+# class Point(Curve):
+    # def __init__(self, x, y):
+        # def px(t):
+            # t_ = t.copy()
+            # t_ = x
+            # return t
+        # def py(t): return t
+        # dx = lambda t: 0
+        # dy = lambda t: 0
+
+# class Line
+
+# class Circle
+    # def __init__(self, r, omega, offset
 
 class Trochoid(Curve):
     def __init__(self, n, r, o=0.0, **kwargs):
@@ -68,15 +101,15 @@ class Trochoid(Curve):
         def y(t):
             return sin(t) + r * sin((n+1)*t + o)
         def x_derivative(a, d=1):
-            cp = cosprime[d%4] # d:th derivative of cos
+            cp = cosprime(d) # d:th derivative of cos
             return cp(a) + r*(n+1)**d*cp((n+1)*a + o)
         def y_derivative(a, d=1):
-            sp = sinprime[d%4]  # d:th derivative of sin
+            sp = sinprime(d)  # d:th derivative of sin
             return sp(a) + r*(n+1)**d*sp((n+1)*a + o)
         Curve.__init__(self, x, y)
         self.x.derivative = x_derivative
         self.y.derivative = y_derivative
-
+# TODO derivative
 class Lissajous(Curve):
     def __init__(self, a, b, A, B, delta):
         """ x = A * sin(a + delta)
@@ -87,9 +120,10 @@ class Lissajous(Curve):
         def y(t):
             return B * sin(b*t)
         def x_derivative(t, d=1):
-            return A * a**d * sinprime[d%4](a*t + delta)
+            return A * a**d * sinprime(d)(a*t + delta)
         def y_derivative(t, d=1):
-            return B * b**d * sinprime[d%4](b*t)
+            return B * b**d * sinprime(d)(b*t)
         Curve.__init__(self, x, y)
         self.x.derivative = x_derivative
         self.y.derivative = y_derivative
+
