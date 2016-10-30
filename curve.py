@@ -133,6 +133,46 @@ class Circle(Curve):
 ################################################################################
 ## Special curves
 
+class Epitrochoid(Curve):
+    def __init__(self, R, r, d, o=0.0):
+        """ An epitrochoid is a roulette traced by a point attached to a
+            circle of radius `r` rolling around the outside of a fixed 
+            circle of radius `R`, where the point is at a distance `d` 
+            from the center of the exterior circle. `o` is the
+            rotational offset of the rotating circle (0<=o<tau).
+            https://en.wikipedia.org/wiki/Epitrochoid """
+        r1 = R+r
+        omega = float(R+r) / r
+        def x(t): return r1*cos(t) - d*cos(omega*t+o)
+        def y(t): return r1*sin(t) - d*sin(omega*t+o)
+        def dx(t, n=1):
+            cp = cosprime(n)
+            return r1*cp(t) - d*omega**n*cp(omega*t+o)
+        def dy(t, n=1):
+            sp = sinprime(n)
+            return r1*sp(t) - d*omega**n*sp(omega*t+o)
+        Curve.__init__(self, x, y, dx, dy)
+
+class Hypotrochoid(Curve):
+    def __init__(self, R, r, d, o=0.0):
+        """ A hypotrochoid is a roulette traced by a point attached to a
+            circle of radius `r` rolling around the inside of a fixed 
+            circle of radius `R`, where the point is a distance `d`
+            from the center of the interior circle. `o` is the
+            rotational offset of the rotating circle (0<=o<tau).
+            https://en.wikipedia.org/wiki/Hypotrochoid """
+        r1 = R-r
+        omega = float(R-r) / r
+        def x(t): return r1*cos(t) + d*cos(omega*t+o)
+        def y(t): return r1*sin(t) - d*sin(omega*t+o)
+        def dx(t, n=1):
+            cp = cosprime(n)
+            return r1*cp(t) + d*omega**n*cp(omega*t+o)
+        def dy(t, n=1):
+            sp = sinprime(n)
+            return r1*sp(t) - d*omega**n*sp(omega*t+o)
+        Curve.__init__(self, x, y, dx, dy)
+
 class Trochoid(Curve):
     def __init__(self, n, r, o=0.0, **kwargs):
         """ n: Number f loops. Positive n makes epitrochoid,
@@ -152,7 +192,7 @@ class Trochoid(Curve):
         Curve.__init__(self, x, y)
         self.x.derivative = x_derivative
         self.y.derivative = y_derivative
-# TODO derivative
+
 class Lissajous(Curve):
     def __init__(self, a, b, A, B, delta):
         """ x = A * sin(a + delta)
