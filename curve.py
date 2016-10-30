@@ -20,13 +20,17 @@ def taylorPoly(f, a, n=1, df=None):
     if df is None:
         df = lambda a, n: numDiff(f, a, n)
     p = Polynomial([0])
-    
     for i in range(n+1):
         q = Polynomial([-a,1])
         q.maxpower = i
         p = p + q**i * df(a,i) / factorial(i)
     return p
 
+def aconst(x, dtype=numpy.float64):
+    """ returns an array function, constant in the value `x`. """
+    def _constf(t):
+        return numpy.full_like(t, x, dtype=dtype)
+    return _constf
 
 class Curve:
     """ Parametric 2D curve. """
