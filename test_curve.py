@@ -214,9 +214,55 @@ def t_curve_add_circ_circ_diff():
 
 ################################################################################
 # Epitrochoid tests
+def t_epitrochoid_values():
+    epi = c.Epitrochoid(3,1,2,tau/2)
+    t = np.linspace(0, tau/3, 5)
+    pts = epi(t)
+    sq3 = np.sqrt(3)
+    pts_ = np.array( [ [6      , 0    ]
+                   , [2*sq3-1, sq3+2]
+                   , [1      , sq3  ]
+                   , [2      , 4    ]
+                   , [-3     , 3*sq3] ]
+                 , dtype = np.float64 )
+    return verySmall(pts-pts_, 2e-30)
+
+def t_epitrochoid_taylor_curve():
+    epi = c.Epitrochoid(3,1,2,tau/2)
+    a = tau/4
+    poly = epi.taylorCurve(a, n=2)
+    poly_ = c.Curve( x = lambda t: 2 - 4*(t-a) - 16*(t-a)**2
+                   , y = lambda t: 4 + 8*(t-a) -  2*(t-a)**2 )
+    t = np.linspace(0,3,11)
+    pts  = poly(t)
+    pts_ = poly_(t)
+    return verySmall(pts-pts_, 1e-28)
 
 ################################################################################
 # Hypotrochoid tests
+def t_hypotrochoid_values():
+    hypo = c.Hypotrochoid(3, 1, 2, tau/2)
+    t = np.linspace(0, tau/3, 5)
+    pts = hypo(t)
+    sq3 = np.sqrt(3)
+    pts_ = np.array( [ [0    , 0    ]
+                   , [sq3-1, sq3+1]
+                   , [2    , 2*sq3]
+                   , [2    , 2    ]
+                   , [0    , 0    ] ]
+                 , dtype = np.float64 )
+    return verySmall(pts-pts_, 2e-30)
+
+def t_hyporochoid_taylor_curve():
+    hypo = c.Hypotrochoid(3,1,2,tau/2)
+    a = tau/4
+    poly = hypo.taylorCurve(a, n=2)
+    poly_ = c.Curve( x = lambda t: 2 - 2*(t-a) - 4*(t-a)**2
+                   , y = lambda t: 2 - 4*(t-a) - 1*(t-a)**2 )
+    t = np.linspace(0,3,11)
+    pts  = poly(t)
+    pts_ = poly_(t)
+    return verySmall(pts-pts_, 1e-28)
 
 ################################################################################
 # Lissajous tests
