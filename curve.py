@@ -57,9 +57,9 @@ class Curve:
         self.x = x
         self.y = y
         if dx is None:
-            def dx(a, n): return numDiff(self.x, a, n)
+            def dx(a, n=1): return numDiff(self.x, a, n)
         if dy is None:
-            def dy(a, n): return numDiff(self.y, a, n)
+            def dy(a, n=1): return numDiff(self.y, a, n)
         self.dx = dx
         self.dy = dy
     def taylorCurve(self, a, n=1):
@@ -75,8 +75,8 @@ class Curve:
     def __add__(self, other):
         def sum_x(t): return self.x(t) + other.x(t)
         def sum_y(t): return self.y(t) + other.y(t)
-        def sum_dx(a, n): return self.dx(a, n) + other.dx(a, n)
-        def sum_dy(a, n): return self.dy(a, n) + other.dy(a, n)
+        def sum_dx(a, n=1): return self.dx(a, n) + other.dx(a, n)
+        def sum_dy(a, n=1): return self.dy(a, n) + other.dy(a, n)
         return Curve(sum_x, sum_y, sum_dx, sum_dy)
 
 def fromFunction(f):
