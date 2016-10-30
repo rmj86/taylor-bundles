@@ -184,6 +184,35 @@ def t_circle_diff():
     return verySmall(ds-expected)
 
 ################################################################################
+# Primitive curve add tests
+def t_curve_add_point_line_values():
+    pt = c.Point(5,10)
+    ln = c.Line(2,5)
+    shifted_ln = pt + ln
+    t = np.arange(5)
+    ps = shifted_ln(t)
+    ps_ = np.array([[5,7,9,11,13],[10,15,20,25,30]]).T
+    return verySmall(ps-ps_)
+def t_curve_add_circ_circ_values():
+    c1 = c.Circle(1,1,0)
+    c2 = c.Circle(2,2,0)
+    c3 = c1+c2
+    t = np.linspace(0,tau,5)
+    ps = c3(t)
+    ps_ = np.array([[3,-2,1,-2,3], [0,1,0,-1,0]]).T
+    return verySmall(ps-ps_)
+def t_curve_add_circ_circ_diff():
+    c1 = c.Circle(1,1,0)
+    c2 = c.Circle(2,2,0)
+    c3 = c1+c2
+    t = np.linspace(0,tau,5)
+    dx = c3.dx(t)
+    dy = c3.dy(t)
+    dx_ = [0,-1,0,1,0]
+    dy_ = [5,-4,3,-4,5]
+    return (verySmall(dx-dx_,1e-29) and verySmall(dy-dy_))
+
+################################################################################
 # Epitrochoid tests
 
 ################################################################################
