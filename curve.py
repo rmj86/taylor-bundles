@@ -5,6 +5,9 @@ from numpy import sin, cos
 from numpy.polynomial import Polynomial
 from math import factorial
 
+################################################################################
+## Calculus helper functions
+
 def numDiff(f, a, n=1, h=0.02):
     """ Numeric nth derivative of function f at point x=a, using symmetric
         finite difference method with point sampling distance h. """
@@ -26,11 +29,27 @@ def taylorPoly(f, a, n=1, df=None):
         p = p + q**i * df(a,i) / factorial(i)
     return p
 
+sinprime_memo = [sin, cos, lambda x: -sin(x), lambda x: -cos(x)]
+def sinprime(n):
+    """ nth derivative os sin(x). """
+    return sinprime_memo[n%4]
+
+cosprime_memo = [cos, lambda x: -sin(x), lambda x: -cos(x), sin]
+def cosprime(n):
+    """ nth derivative of cos(x). """
+    return cosprime_memo[n%4]
+
+################################################################################
+## Other helper fnctions
+
 def aconst(x, dtype=numpy.float64):
     """ returns an array function, constant in the value `x`. """
     def _constf(t):
         return numpy.full_like(t, x, dtype=dtype)
     return _constf
+
+################################################################################
+## Curve base class
 
 class Curve:
     """ Parametric 2D curve. """
@@ -64,35 +83,55 @@ def fromFunction(f):
     """takes a function  f  and returns a Curve object representing
        the parametric curve  <t, f(t)>"""
     x = lambda t: t
-    # y = lambda t: f(t)
-    # c = Curve(x, y)
     c = Curve(x, f)
     return c
 
-sinprime_memo = [sin, cos, lambda x: -sin(x), lambda x: -cos(x)]
-def sinprime(n):
-    """ nth derivative os sin(x). """
-    return sinprime_memo[n%4]
+################################################################################
+## Primitive curves
 
-cosprime_memo = [cos, lambda x: -sin(x), lambda x: -cos(x), sin]
-def cosprime(n):
-    """ nth derivative of cos(x). """
-    return cosprime_memo[n%4]
+class Point(Curve):
+    def __init__(self, x0, y0):
+        """ A parametric point, i.e. a parametric curve  <x(t),y(t)>
+            such that  x(t) = `x0`, y(t) = `x0`  for all t. """
+        fx = aconst(x0)
+        fy = aconst(y0)
+        def dx(a, n=1):
+            if n==0: return x0
+            else: return 0
+        def dy(a, n=1):
+            if n==0: return y0
+            else: return 0
+        Curve.__init__(self, fx, fy, dx, dy)
 
-# class Point(Curve):
-    # def __init__(self, x, y):
-        # def px(t):
-            # t_ = t.copy()
-            # t_ = x
-            # return t
-        # def py(t): return t
-        # dx = lambda t: 0
-        # dy = lambda t: 0
+class Line(Curve):
+    def __init__(self, a, b):
+        """ Parametric line through (0,0) with run and rise a, b.
+            <a*t, b*t> """
+        def x(t): return a*t
+        def y(t): return b*t
+        def dx(t, n=1):
+            if   n==0: return t*a
+            elif n==1: return a
+            else:      return 0
+        def dy(t, n=1):
+            if   n==0: return t*b
+            elif n==1: return b
+            else:      return 0
+        Curve.__init__(self, x, y, dx, dy)
 
-# class Line
+class Circle(Curve):
+    def __init__(self, r, omega=1.0, o=0.0):
+        """ Parametric circle with radius `r`, angular
+            velocity `omega`, and rotational offset `o`.
+            <r*cos(omega*t+o), r*sin(omega*t+o)> """
+        def x(t): return r*cos(omega*t+o)
+        def y(t): return r*sin(omega*t+o)
+        def dx(a, n=1): return omega**n * r*cosprime(n)(omega*a+o)
+        def dy(a, n=1): return omega**n * r*sinprime(n)(omega*a+o)
+        Curve.__init__(self, x, y, dx, dy)
 
-# class Circle
-    # def __init__(self, r, omega, offset
+################################################################################
+## Special curves
 
 class Trochoid(Curve):
     def __init__(self, n, r, o=0.0, **kwargs):
