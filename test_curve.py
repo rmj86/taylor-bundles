@@ -91,9 +91,34 @@ def t_curve_add():
     ps = spiral(t)
     ps_ = [[1,0],[1,3],[1,4],[3,5],[5,8]]
     return verySmall(ps-ps_)
-    
+
+################################################################################
+# const tests
+def t_aconst_dtype():
+    t = np.arange(6)
+    f = c.aconst(77)
+    x = f(t)
+    return (x.dtype == np.float64)
+def t_aconst_values():
+    t = np.arange(6)
+    f = c.aconst(77.5)
+    x = f(t)
+    x_ = x - 77.5
+    return (x_ == 0).all()
+
 ################################################################################
 # fromFunction tests
+def t_fromFunction_dtype():
+    pcurve = c.fromFunction(lambda x: x)
+    t = np.arange(5, dtype=np.int32)#, dtype=np.float64)
+    ps = pcurve(t)
+    return ps.dtype == np.float64
+def t_fromFunction_values():
+    pcurve = c.fromFunction(lambda x: x*x*x)
+    t = np.arange(5)
+    ps = pcurve(t)
+    ps_ = [[0,0],[1,1],[2,8],[3,27],[4,64]]
+    return verySmall(ps-ps_)
 
 ################################################################################
 # Point tests
@@ -128,7 +153,11 @@ all_tests = [
             , t_curve_taylorCurve
             , t_curve_dxdydt
             , t_curve_add
+            , t_aconst_dtype
+            , t_aconst_values
+            , t_fromFunction_dtype
+            , t_fromFunction_values
             ]
-            
+
 if __name__ == "__main__":
     testAll( all_tests)
