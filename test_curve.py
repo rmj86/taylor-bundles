@@ -122,12 +122,66 @@ def t_fromFunction_values():
 
 ################################################################################
 # Point tests
+def t_point_values():
+    point = c.Point(3,5)
+    t = np.linspace(1,77,3)
+    ps = point(t)
+    ps_ = [[3,5],[3,5],[3,5]]
+    return (ps==ps_).all()
+def t_point_diff():
+    point = c.Point(3,5)
+    ds = np.array( [ point.dx(99, n=0)
+                   , point.dy(99, n=0)
+                   , point.dx(99, n=1)
+                   , point.dy(99, n=1)
+                   , point.dx(99, n=2)
+                   , point.dy(99, n=2) ]
+                 , dtype = np.float64)
+    expected = np.array([3,5,0,0,0,0])
+    return (expected == ds).all()
 
 ################################################################################
 # Line tests
+def t_line_values():
+    line = c.Line(2,6)
+    t = np.arange(4)
+    ps = line(t)
+    ps_ = [[0,0],[2,6],[4,12],[6,18]]
+    return verySmall(ps-ps_)
+def t_line_diff():
+    line = c.Line(2,6)
+    ds = np.array( [ line.dx(0,  n=0)
+                   , line.dx(10, n=0)
+                   , line.dx(0,  n=1)
+                   , line.dx(1,  n=2)
+                   , line.dy(0,  n=0)
+                   , line.dy(10, n=0)
+                   , line.dy(0,  n=1)
+                   , line.dy(1,  n=2) ]
+                 , dtype=np.float64)
+    expected = np.array([0,20,2,0,  0,60,6,0])
+    return (expected == ds).all()
 
 ################################################################################
 # Circle tests
+def t_circle_values():
+    circ = c.Circle(5, 2, tau/4)
+    t = np.linspace(0,tau/2,5)
+    ps = circ(t)
+    t_ = np.linspace(0,tau,5)
+    ps_ = [[0,5],[-5,0],[0,-5],[5,0],[0,5]]
+    return verySmall(ps-ps_)
+def t_circle_diff():
+    circ = c.Circle(5, 2, tau/4)
+    ds = np.array( [ circ.dx(0, n=0)
+                   , circ.dx(0, n=1)
+                   , circ.dx(0, n=2)
+                   , circ.dy(0, n=0)
+                   , circ.dy(0, n=1)
+                   , circ.dy(0, n=2) ]
+                 , dtype = np.float64 )
+    expected = [0,-10,0,5,0,-20]
+    return verySmall(ds-expected)
 
 ################################################################################
 # Epitrochoid tests
@@ -140,24 +194,10 @@ def t_fromFunction_values():
 
 ################################################################################
 # all tests
-
-all_tests = [
-              t_numDiff_sin
-            , t_numDiff_sin5
-            , t_taylorPoly_cos
-            , t_taylorPoly_sin
-            , t_sinprime
-            , t_cosprime
-            , t_curve_base_case
-            , t_curve_call
-            , t_curve_taylorCurve
-            , t_curve_dxdydt
-            , t_curve_add
-            , t_aconst_dtype
-            , t_aconst_values
-            , t_fromFunction_dtype
-            , t_fromFunction_values
+all_tests = [ value
+              for name, value in locals().items()
+              if name.startswith("t_")
             ]
 
 if __name__ == "__main__":
-    testAll( all_tests)
+    testAll(all_tests, v=3)
