@@ -266,6 +266,30 @@ def t_hyporochoid_taylor_curve():
 
 ################################################################################
 # Lissajous tests
+def t_lissajous_values():
+    liss = c.Lissajous(3, 4, 4, 3, tau/12)
+    t = np.linspace(0, tau/3, 5)
+    pts = liss(t)
+    sq3 = np.sqrt(3)
+    pts_ = np.array( [ [2      , 0       ]
+                     , [2*sq3  , 3*sq3/2 ]
+                     , [-2     , -3*sq3/2]
+                     , [-2*sq3 , 0       ]
+                     , [2      , 3*sq3/2 ] ]
+                   , dtype = np.float64 )
+    return verySmall(pts-pts_)
+
+def t_lissajous_taylor_curve():
+    liss = c.Lissajous(3, 4, 4, 3, tau/12)
+    a = 2*tau/12
+    sq3 = np.sqrt(3)
+    poly = liss.taylorCurve(a, n=2)
+    poly_ = c.Curve( x = lambda t: -2       - 6*sq3*(t-a) + 9     *(t-a)**2
+                   , y = lambda t: -3*sq3/2 - 6    *(t-a) + 12*sq3*(t-a)**2 )
+    t = np.linspace(0, 3, 11)
+    pts  = poly(t)
+    pts_ = poly_(t)
+    return verySmall(pts-pts_, 1e-27)
 
 ################################################################################
 # all tests
