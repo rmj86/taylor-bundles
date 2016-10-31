@@ -136,8 +136,8 @@ class Circle(Curve):
 class Epitrochoid(Curve):
     def __init__(self, R, r, d, o=0.0):
         """ An epitrochoid is a roulette traced by a point attached to a
-            circle of radius `r` rolling around the outside of a fixed 
-            circle of radius `R`, where the point is at a distance `d` 
+            circle of radius `r` rolling around the outside of a fixed
+            circle of radius `R`, where the point is at a distance `d`
             from the center of the exterior circle. `o` is the
             rotational offset of the rotating circle (0<=o<tau).
             https://en.wikipedia.org/wiki/Epitrochoid """
@@ -156,7 +156,7 @@ class Epitrochoid(Curve):
 class Hypotrochoid(Curve):
     def __init__(self, R, r, d, o=0.0):
         """ A hypotrochoid is a roulette traced by a point attached to a
-            circle of radius `r` rolling around the inside of a fixed 
+            circle of radius `r` rolling around the inside of a fixed
             circle of radius `R`, where the point is a distance `d`
             from the center of the interior circle. `o` is the
             rotational offset of the rotating circle (0<=o<tau).
@@ -183,15 +183,13 @@ class Trochoid(Curve):
             return cos(t) + r * cos((n+1)*t + o)
         def y(t):
             return sin(t) + r * sin((n+1)*t + o)
-        def x_derivative(a, d=1):
+        def dx(a, d=1):
             cp = cosprime(d) # d:th derivative of cos
             return cp(a) + r*(n+1)**d*cp((n+1)*a + o)
-        def y_derivative(a, d=1):
+        def dy(a, d=1):
             sp = sinprime(d)  # d:th derivative of sin
             return sp(a) + r*(n+1)**d*sp((n+1)*a + o)
-        Curve.__init__(self, x, y)
-        self.x.derivative = x_derivative
-        self.y.derivative = y_derivative
+        Curve.__init__(self, x, y, dx, dy)
 
 class Lissajous(Curve):
     def __init__(self, a, b, A, B, delta):
@@ -202,11 +200,9 @@ class Lissajous(Curve):
             return A * sin(a*t + delta)
         def y(t):
             return B * sin(b*t)
-        def x_derivative(t, d=1):
-            return A * a**d * sinprime(d)(a*t + delta)
-        def y_derivative(t, d=1):
-            return B * b**d * sinprime(d)(b*t)
-        Curve.__init__(self, x, y)
-        self.x.derivative = x_derivative
-        self.y.derivative = y_derivative
+        def dx(t, n=1):
+            return A * a**n * sinprime(n)(a*t + delta)
+        def dy(t, n=1):
+            return B * b**n * sinprime(n)(b*t)
+        Curve.__init__(self, x, y, dx, dy)
 
