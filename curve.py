@@ -173,23 +173,15 @@ class Hypotrochoid(Curve):
             return r1*sp(t) - d*omega**n*sp(omega*t+o)
         Curve.__init__(self, x, y, dx, dy)
 
-class Trochoid(Curve):
-    def __init__(self, n, r, o=0.0, **kwargs):
-        """ n: Number f loops. Positive n makes epitrochoid,
-                               negative n makes hypotrochoid.
-            r: radius of the rolling part. (fixed part has radius 1)
-            o: rotational offset of rolling part. """
-        def x(t):
-            return cos(t) + r * cos((n+1)*t + o)
-        def y(t):
-            return sin(t) + r * sin((n+1)*t + o)
-        def dx(a, d=1):
-            cp = cosprime(d) # d:th derivative of cos
-            return cp(a) + r*(n+1)**d*cp((n+1)*a + o)
-        def dy(a, d=1):
-            sp = sinprime(d)  # d:th derivative of sin
-            return sp(a) + r*(n+1)**d*sp((n+1)*a + o)
-        Curve.__init__(self, x, y, dx, dy)
+def Trochoid(n, r, o=0.0):
+    """ Trochoid curve, simplified.
+        n: Number f loops. Positive n makes epitrochoid,
+                           negative n makes hypotrochoid.
+        r: radius of the rolling part. (fixed part has radius 1)
+        o: rotational offset of rolling part. """
+    c0 = Circle(1.0)
+    c1 = Circle(r, n+1, o)
+    return (c0+c1)
 
 class Lissajous(Curve):
     def __init__(self, a, b, A, B, delta):
@@ -205,4 +197,3 @@ class Lissajous(Curve):
         def dy(t, n=1):
             return B * b**n * sinprime(n)(b*t)
         Curve.__init__(self, x, y, dx, dy)
-
