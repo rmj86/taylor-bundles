@@ -10,6 +10,14 @@ import misc
 import numpy
 
 
+################################################################################
+## Utility functions
+def verysmall(a):
+    """ returns True when the values of ndarray `a` are small. """
+    # used when we really want the values to be 0, but this
+    # can't be guaranteed due to floating errors.
+    return numpy.average(a*a) <= 1e-30
+
 ###############################################################################
 ## Color mixer test cases.
 ##
@@ -68,13 +76,13 @@ def cm_normalize_test2():
     s = numpy.linspace(0,1,8)
     t = numpy.linspace(2,7,8)
     t = colormix.normalize(2,7)(t)
-    b = sum(numpy.fabs(s - t))
+    b = verysmall(s-t)
     return b
 def cm_normalize_test3():
     s = numpy.linspace(0,1,11)
     t = numpy.linspace(10,2*numpy.pi,11)
     t = colormix.normalize(10,2*numpy.pi)(t)
-    b = sum(numpy.fabs(s - t))
+    b = verysmall(s-t)
     return b
 
 # mix2 test with HTML hex color and smoothstep
@@ -119,14 +127,14 @@ def cm_cosine_values1():
     m = colormix.cosine(0,2)
     v = m(t)
     v_ = [0, 0.5, 1, 0.5, 0]
-    b = sum(numpy.fabs(v - v_)) < 1e-15
+    b = verysmall(v - v_)
     return b
 def cm_cosine_values2():
     t = numpy.array([-4, 0, 4, 8])
     m = colormix.cosine(0,4)
     v = m(t)
     v_ = [1, 0, 1, 0]
-    b = sum(numpy.fabs(v - v_)) < 1e-15
+    b = verysmall(v - v_)
     return b
 # colormix.gaussian - returns correct result for some obvious arguments
 def cm_gaussian_values1():
@@ -134,14 +142,14 @@ def cm_gaussian_values1():
     m = colormix.gaussian(2,2)
     v = m(t)
     v_ = [.0625, .5, 1, .5, .0625]
-    b = sum(numpy.fabs(v - v_)) < 1e-15
+    b = verysmall(v - v_)
     return b
 def cm_gaussian_values2():
     t = numpy.array([-1,3,5,7,11])
     m = colormix.gaussian(5,4)
     v = m(t)
     v_ = [2**-9, .5, 1, .5, 2**-9]
-    b = sum(numpy.fabs(v - v_)) < 1e-15
+    b = verysmall(v - v_)
     return b
 
 
