@@ -9,6 +9,10 @@ Short term:
 10. ~~renderer should issue a WARNING when it is passed an invalid option.~~
 13. ~~let a colormixer maker take another mixer as an argument, for more complex color possibilities.~~
 9. ~~tangents should be able to get their (variable) alpha value from the color(-mixer) as part of the rgba tuple. If parameter _tanalpha_ is not None, it should overide the rgba alpha value~~
+1. ~~Make "smoothstep" color mixer~~
+1. ~~Give Curve the __add__ method, so that curves can be defined as sums of other curves.~~
+1. ~~Make primitive curves Circle, Line ande Point. This allows us to define many curves, including trochoids, as sums of simple curves.~~
+1. ~~colorfunctions based on matplotlib color ranges~~
 4. Write readme - how to use 
     1. Index
     2. ~~Statement of purpose~~
@@ -21,10 +25,11 @@ Short term:
         * ~~example files and renders~~
         * options
     4. Other modules
-        * ~~curves, prdefined~~
-        * ~~curves, how to define your own~~
+        * primitive curves
+        * predefined curves
+        * curves, how to define your own
         * colormixer, how it works
-        * clormixer, predefined options,
+        * colormixer, predefined options,
         * how to define your own, with examples
         * something about linear color space?
 3. Make a gallery of example renders
