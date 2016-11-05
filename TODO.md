@@ -1,4 +1,4 @@
-Short term:
+## Short term:
 
 1. ~~Add the program and module files.~~
 2. ~~Check that they work!~~
@@ -24,18 +24,27 @@ Short term:
     4. ~~How to use:~~
         * ~~example files and renders~~
         * options
-    4. Other modules
-        * primitive curves
-        * predefined curves
-        * curves, how to define your own
-        * colormixer, how it works
-        * colormixer, predefined options,
-        * how to define your own, with examples
-        * something about linear color space?
+        * options and image quality
+    4. ~~Other modules~~
+        * ~~primitive curves~~
+        * ~~predefined curves~~
+        * ~~sums of curves~~
+        * ~~curves, how to define your own~~
+        * ~~colormixer, how it works~~
+        * ~~colormixer, predefined options,~~
+        * ~~how to define your own, with examples~~
+        * ~~something about linear color space?~~
 3. Make a gallery of example renders
 5. Comment the modules regarding implementation details
+1. Curve.__sub__
+1. curve.fromFunction df argument
+1. eliminate use of curve.Trochoid
+1. rename `colormix`, `mix2`  ->  `color`, `blend`
+1. refactor `curve`: changes to a special curve's parameters should carry forward to change the functions. Currently this is not possible because the component functions are defined with the parameters in a closure, and the parameter values are not set as properties of the Curve object.
+1. latex forumlas in README
+1. implement TaylorBundle.__setattr__  (and update README regarding how to set attrs)
 
-Long term:
+## Long term:
 
 1. Optimize rendering with pyplot.collections
 2. Make a RELEASE

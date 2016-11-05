@@ -4,7 +4,12 @@ import taylorbundle
 import curve
 import colormix
 from numpy import (sin, cos, pi)
+import numpy as np
 from copy import copy
+import matplotlib
+import matplotlib.pyplot as plt
+
+tau = 2*pi
 
 ####################
 ##  Tangent bundle
@@ -45,9 +50,9 @@ def fig3():
     tb = copy(tb1)
     tb.set_options(
               filename = "figures/readme_fig3"
-            , n_tan = 1000
-            , n_part = 10
-            , tanlw = 1
+            , n_tan = 2000
+            , n_part = 5
+            , tanlw = 0.4
             , tanalpha = 0.4
             )
     tb.render()
@@ -138,14 +143,108 @@ def fig9():
             )
     tb.render()
 
+################################################################################
+## Curve illustration
+
+def curve_cycloid():
+    line = curve.Line(1, 0)
+    circle = curve.Circle(1, -1, -tau/4)
+    c = line + circle
+    tb = copy(tb1)
+    wx = 2*tau
+    wy = wx * 9./32.
+    tb.set_options( curve = c
+                  , filename = "figures/curve_cycloid"
+                  , domain = [0, wx]
+                  , window = [0, wx, -wy, wy]
+                  , n_tan = 0
+                  )
+    tb.render()
+    
+################################################################################
+### colormix illustrations
+
+def cm_fig_template(norm, normargs, filename):
+    # initialize
+    fig, (ax1, ax2) = plt.subplots(2, sharex = True)
+    fig.subplots_adjust(hspace=0)  # no space between subplots
+    ax2.get_yaxis().set_visible(False)  # remove yaxis on lower subplot
+    n = 128
+    t = np.linspace(0,10, n)
+    c1, c2 = "royalblue", "gold"
+    _norm = norm(*normargs)
+    cmap = colormix.mix2(c1, c2, _norm)
+    ax1.set_title("mix2({}, {}, {}{})".format(c1, c2, norm.__name__, normargs))
+    # plot upper graph - the norm curve
+    ax1.fill_between(t, _norm(t), 1, facecolor=c1, lw=0)
+    ax1.fill_between(t, 0, _norm(t), facecolor=c2, lw=0)
+    # plot lower graph - the color gradient
+    colors = cmap(t)
+    # vertices = np.vstack([t[:-1],t[1:]]).T[np.newaxis,:]
+    vertices = np.ndarray((n-1,2,2))
+    vertices[:,0,0] = t[:-1]  # x coodr pt 1
+    vertices[:,1,0] = t[1:]  # x coord pt 2
+    vertices[:,:,1] = 0.5
+    segments = matplotlib.collections.LineCollection(vertices
+                    , color=colors, lw=2*72)
+    ax2.add_collection(segments)
+    # save figure
+    fig.set_size_inches(6,3)
+    fig.savefig("figures/"+filename, dpi=60)
+    plt.clf()
+
+def cm_fig1():
+    def normalize(a, b):
+        def _normalize(t):
+            return colormix._bounded(colormix.normalize(a,b)(t))
+        return _normalize
+    cm_fig_template(normalize, (2,8), "cm_fig1.png")
+def cm_fig2():
+    cm_fig_template(colormix.smoothstep, (2,8), "cm_fig2.png")
+def cm_fig3():
+    cm_fig_template(colormix.cosine, (4,6), "cm_fig3.png")
+def cm_fig4():
+    cm_fig_template(colormix.gaussian, (6,2), "cm_fig4.png")
+
+def cm_fig5():
+    c = curve.fromFunction( np.sin )
+    def norm(t):
+        return colormix.normalize(-1,1)(sin(t))
+    cfun = colormix.colormap("Spectral", norm)
+    tb = copy(tb1)
+    tb.set_options(
+              filename = "figures/cm_fig5"
+            , curve = c
+            , tancol = cfun
+            , showcurve = False
+            , n_tan = 3333
+            , n_part = 3
+            , tanlw = .5
+            , tanalpha = 0.2
+            , figsize = [6,4]
+            , window = [-12,12,-8,8]
+            , domain = [-20,20]
+            , dpi = 60
+            )
+    tb.renderTancolorLegend()
+    tb.render()
+    
 
 if __name__ == "__main__":
-    fig1()
-    fig2()
-    fig3()
-    fig4()
-    fig5()
-    fig6()
-    fig7()
-    fig8()
-    fig9()
+    # fig1()
+    # fig2()
+    # fig3()
+    # fig4()
+    # fig5()
+    # fig6()
+    # fig7()
+    # fig8()
+    # fig9()
+    
+    curve_cycloid()
+    
+    # cm_fig1()
+    # cm_fig2()
+    # cm_fig3()
+    # cm_fig4()
+    # cm_fig5()
