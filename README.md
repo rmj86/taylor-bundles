@@ -57,7 +57,7 @@ Again we can see a pattern, intuit the concept of an **n<sup>th</sup> degree Tay
 
 #### Parametric Curves
 
-Given a parametric curve c(t) = (x(t), y(t)), the concepts are extended as such: The n<sup>th</sup> degree Taylor curve of c(t) about t=a is (p(t), q(t)) where p(t) is the n<sup>th</sup> degree Taylor polynomial of x(t) about t=a, and q(t) is the n<sup>th</sup> degree Taylor polynomial of y(t) about t=a.
+Given a parametric curve c(t) = \<x(t), y(t)\>, the concepts are extended as such: The n<sup>th</sup> degree Taylor curve of c(t) about t=a is \<p(t), q(t)\> where p(t) is the n<sup>th</sup> degree Taylor polynomial of x(t) about t=a, and q(t) is the n<sup>th</sup> degree Taylor polynomial of y(t) about t=a.
 
 Here is an example of a parametric curve (an epitrochoid) with a 4<sup>th</sup> degree Taylor curve about a point: 
 
