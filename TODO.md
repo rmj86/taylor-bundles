@@ -42,6 +42,7 @@
 1. rename `colormix`, `mix2`  ->  `color`, `blend`
 1. refactor `curve`: changes to a special curve's parameters should carry forward to change the functions. Currently this is not possible because the component functions are defined with the parameters in a closure, and the parameter values are not set as properties of the Curve object.
 1. latex forumlas in README
+1. implement TaylorBundle.__setattr__  (and update README regarding how to set attrs)
 
 ## Long term:
 
