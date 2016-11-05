@@ -34,36 +34,36 @@ Caveat: If we want to see the density as a property of _the curve_ rather than a
 
 #### Taylor Polynomials
 
-The concept of a taylor polynomial can be seen as an extension of the concept of a tangent line. Given a function f(x), the n'th degree Taylor polynomial of f about the point x=a is an n'th degree polynomial p(x) such that
+The concept of a taylor polynomial can be seen as an extension of the concept of a tangent line. Given a function f(x), the n<sup>th</sup> degree Taylor polynomial of f about the point x=a is an n<sup>th</sup> degree polynomial p(x) such that
 
 *  p(a) = f(a)
 *  p'(a) = f(a)
 *  ...
-*  p^(n)(a) = f^(n)(a)   <-- n'th derivative equal
+*  p^(n)(a) = f^(n)(a)   <-- n<sup>th</sup> derivative equal
 
 Again p is unique for a given a, and it's equation is sum_0^n(f^(n)(a)(x-a)^n/n!)
 
-Here's a picture of the 2nd degree Taylor polynomial of y=sin(x) about x=1:
+Here's a picture of the 2<sup>nd</sup> degree Taylor polynomial of y=sin(x) about x=1:
 
 ![Figure 4](figures/readme_fig4.png)
 
 #### Taylor Bundles
 
-Like we can draw many tangents together, so we can draw many Taylor polynomials. Here is an image of 10,000 2nd degree Taylor polynomials of sin(x) in the domain -4pi<x<4pi. 
+Like we can draw many tangents together, so we can draw many Taylor polynomials. Here is an image of 10,000 2<sup>nd</sup> degree Taylor polynomials of sin(x) in the domain -4pi<x<4pi. 
 
 ![Figure 5](figures/readme_fig5.png)
 
-Again we can see a pattern, intuit the concept of an **n'th degree Taylor bundle,** having a **density**, and being continuous.
+Again we can see a pattern, intuit the concept of an **n<sup>th</sup> degree Taylor bundle,** having a **density**, and being continuous.
 
 #### Parametric Curves
 
-Given a parametric curve c(t) = (x(t), y(t)), the concepts are extended as such: The n'th degree Taylor curve of c(t) about t=a is (p(t), q(t)) where p(t) is the n'th degree Taylor polynomial of x(t) about t=a, and q(t) is the n'th degree Taylor polynomial of y(t) about t=a.
+Given a parametric curve c(t) = (x(t), y(t)), the concepts are extended as such: The n<sup>th</sup> degree Taylor curve of c(t) about t=a is (p(t), q(t)) where p(t) is the n<sup>th</sup> degree Taylor polynomial of x(t) about t=a, and q(t) is the n<sup>th</sup> degree Taylor polynomial of y(t) about t=a.
 
-Here is an example of a parametric curve (an epitrochoid) with a 4th degree Taylor curve about a point: 
+Here is an example of a parametric curve (an epitrochoid) with a 4<sup>th</sup> degree Taylor curve about a point: 
 
 ![Figure 6](figures/readme_fig6.png)
 
-And here is the corresponding 4th degree Taylor bundle for the (full) domain 0<t<2pi:
+And here is the corresponding 4<sup>th</sup> degree Taylor bundle for the (full) domain 0<t<2pi:
 
 ![Figure 7](figures/readme_fig7.png)
 
@@ -198,7 +198,7 @@ The `curve` argument to a TaylorBundle is an instance of the `Curve` class. It h
 
 The arguments `x(t)` and `y(t)` are the x and y coordinates of the curve, functions of a third independent variable. The argument and return value should both be a numpy `ndarray`.
 
-The optional arguments `dx(t, n=1)` and `dy(t, n=1)` are the derivatives of `x` and `y` w.r.t. `t`. `n` is the order of the derivative. For drawin the nth order Taylor Bundle, the derivative funcion must be valid up to order n. Note that `dx(t, 0)` should equal `x(t)`, and similarly for `dy`.
+The optional arguments `dx(t, n=1)` and `dy(t, n=1)` are the derivatives of `x` and `y` w.r.t. `t`. `n` is the order of the derivative. For drawin the n<sup>th</sup> order Taylor Bundle, the derivative funcion must be valid up to order n. Note that `dx(t, 0)` should equal `x(t)`, and similarly for `dy`.
 
 If `dx` and `dy` are not supplied, they default to numerical differentiation (symmetric finite difference method.) The result can often be sufficient for lower order terms, e.g. `n<=3`.
 
