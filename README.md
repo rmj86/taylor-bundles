@@ -29,16 +29,15 @@ We can guess the tangent density to be continuous around every (or most) points 
 
 ![Figure 3](figures/readme_fig3.png)
 
-Caveat: If we want to look at the bundle as a property of _the curve_ rather than a property of _the function_, the curve should be reparametrized with respect to arc length. This is not currently implemented in the program, and the distinction will be glossed over for the rest of this text.
+Caveat: If we want to see the density as a property of _the curve_ rather than a property of _the function_, the curve should be reparametrized with respect to arc length. This is not currently implemented in the program, and the distinction will be glossed over for the rest of this text.
 
 
 #### Taylor Polynomials
 
-The concept of a taylor polynomial can be seen as an extension of the concept of a tangent line. Given a function f(x), the n'th degree Taylor polynomial of f around the point <a, f(a)> is an n'th degree polynomial p(x) such that
+The concept of a taylor polynomial can be seen as an extension of the concept of a tangent line. Given a function f(x), the n'th degree Taylor polynomial of f about the point x=a is an n'th degree polynomial p(x) such that
 
 *  p(a) = f(a)
 *  p'(a) = f(a)
-*  p''(a) = f''(a)
 *  ...
 *  p^(n)(a) = f^(n)(a)   <-- n'th derivative equal
 
@@ -60,7 +59,7 @@ Again we can see a pattern, intuit the concept of an **n'th degree Taylor bundle
 
 Given a parametric curve c(t) = (x(t), y(t)), the concepts are extended as such: The n'th degree Taylor curve of c(t) about t=a is (p(t), q(t)) where p(t) is the n'th degree Taylor polynomial of x(t) about t=a, and q(t) is the n'th degree Taylor polynomial of y(t) about t=a.
 
-Here is an examplem of a parametric curve (a hypotrochoid) with a 4th degree Taylor curve about a point: 
+Here is an example of a parametric curve (an epitrochoid) with a 4th degree Taylor curve about a point: 
 
 ![Figure 6](figures/readme_fig6.png)
 
@@ -73,11 +72,11 @@ And here is the corresponding 4th degree Taylor bundle for the (full) domain 0<t
 
 Thus far the bundles have been rendred in monochrome. We can color code the Taylor curves, and thus see how much density they contribute to an area of the bundle according to their point of origin.
 
-For example, if we color them based on this scheme, where the curves originating on the "peaks" of the curve are yellow and the ones originating in the "valleys" are blue,
+As an example we use this scheme. The curves originating on the "peaks" of the curve are yellow and the ones originating in the "valleys" are blue, with a gradient in between:
 
 ![Figure 8](figures/readme_fig8.png)
 
-the bundle looks as such:
+The bundle looks as such:
 
 ![Figure 9](figures/readme_fig9.png)
 
@@ -101,7 +100,7 @@ The easiest way to get a valid curve argument is the `fromFunction` function , e
 
 Minimal definition:
 
-```
+```Python
 from taylorbundle import TaylorBundle
 import curve
 import numpy
@@ -138,7 +137,7 @@ TODO more verbose descriptions
 
 ###### Mathematical specification of the bundle
 
-option       | Default Value | Description
+Option       | Default Value | Description
 -------------|---------------|------------
 curve        | None          | The generating curve for the bundle. 
 degree       | 1             | The degree of the Taylor polynomials.
@@ -148,7 +147,7 @@ domain       | (0, tau)      | The domain of both the curve and tangent space. S
 
 ###### Rendering of the generating curve
 
-option | Default Value | Description
+Option | Default Value | Description
 -------|---------------|------------
 showcurve  | True |  If `True`, Show the generating curve on top of the tangent bundle.
 curveres   | 256  |  Resolution of generating curve
@@ -158,7 +157,7 @@ curvealpha | None |  Transparency of generating curve. Should be a number betwee
 
 ###### Rendering of the Taylor curves
 
-option | Default Value | Description
+Option | Default Value | Description
 -------|---------------|------------
 n_tan     | 200    | Number of tangents per image render.
 tandomain | [-2,2] | Domain of tangent lines (extension of parameter around the point of tangency.)
@@ -169,7 +168,7 @@ tancol    | "r"    | colour of tangents. Can be constant or generating function
 
 ###### Rendering of the image
 
-option | Default Value | Description
+Option | Default Value | Description
 -------|---------------|------------
 n_part    | 1             | Number of partial images to render. Drawing tens of thousands of lines to a single frame can cause memory problems. With this setting >1 the rendering is split up over multiple images which are finally combined.
 facecolor | 'k'           | Background colour of plotting surface
@@ -179,7 +178,7 @@ dpi       | 120           | Resolution of image (dots per inch).
 
 Other
 
-option | Default Value | Description
+Option | Default Value | Description
 -------|---------------|------------
 filename      | None  | Name for the saved image file. If `None`, makes a file name based on current date and time.
 keep_partials | False | Keep partial files after render finishes
@@ -195,11 +194,11 @@ TODO
 
 ###### `Curve(x, y, dx=None, dy=None)`
 
-A parametric curve is an instance of the `Curve` class. It has the `taylorCurve` method, which does a Taylor expansion around a given point, and allows us to draw our bundles.
+The `curve` argument to a TaylorBundle is an instance of the `Curve` class. It has the `taylorCurve` method, which does a Taylor expansion around a given point, and allows us to draw our bundles.
 
 The arguments `x(t)` and `y(t)` are the x and y coordinates of the curve, functions of a third independent variable. The argument and return value should both be a numpy `ndarray`.
 
-The optional arguments `dx(t, n=1)` and `dy(t, n=1)` are the derivatives of `x` and `y` w.r.t. `t`. `n` is the order of the derivative. For drawin the nth order Taylor undle, the derivative funcion must be valid up do order n. Note that `dx(t, 0)` should equal `x(t)`, and somolarly for `dy`.
+The optional arguments `dx(t, n=1)` and `dy(t, n=1)` are the derivatives of `x` and `y` w.r.t. `t`. `n` is the order of the derivative. For drawin the nth order Taylor Bundle, the derivative funcion must be valid up to order n. Note that `dx(t, 0)` should equal `x(t)`, and similarly for `dy`.
 
 If `dx` and `dy` are not supplied, they default to numerical differentiation (symmetric finite difference method.) The result can often be sufficient for lower order terms, e.g. `n<=3`.
 
@@ -209,11 +208,11 @@ Returns a Curve instance representing the curve y=f(x).
 
 ###### `Point(x0, y0)`
 
-A parametric point, i.e. a Curve where x(t)=x0 and y(t)=y0 for any t.
+A parametric point, i.e. a Curve where x(t)=x0 and y(t)=y0 for all t.
 
 ###### `Line(a, b)`
 
-A parametric line with run `a` and rise `b`. I.e. x(t)=a*t and y(t)=b*t.
+A parametric line with run `a` and rise `b`. I.e. x(t)=a\*t and y(t)=b\*t.
 
 ###### `Circle(r, omega=1.0, o=0.0)`
 
@@ -229,11 +228,11 @@ A [hypotrochoid curve](https://en.wikipedia.org/wiki/Hypotrochoid), where `R` is
 
 ###### `Lissajous(a, b, A, B, delta)`
 
-A lissajous curve, a complec harmonic curve where the x and y components are each a simple harmonic motion. `a` and `b` are the angular frequency of the x and y component respectively, `A` and `B` are their respective amplitude, and `delta` is the offset in phase between the components.
+A [lissajous curve](https://en.wikipedia.org/wiki/Lissajous_curve), a complex harmonic curve where the x and y components are each a simple harmonic motion. `a` and `b` are the angular frequency of the x and y component respectively, `A` and `B` are their respective amplitude, and `delta` is the offset in phase between the components.
 
 #### Curves as sums
 
-Curves can be defined as sums of `Curve` instances. E.g. an epitrochoid can be defined as the sum of two circular motions. Here is an examples of a cycloid curve being defined as the sum of a linear and a circular motion:
+Curves can be defined as sums of `Curve` instances. E.g. an epitrochoid can be defined as the sum of two circular motions. Here is an examples of a [cycloid curve](https://en.wikipedia.org/wiki/Cycloid) being defined as the sum of a linear and a circular motion:
 
 ```Python
 line = curve.Line(1, 0)
@@ -245,7 +244,7 @@ c = line + circle
 
 #### Define your own Curve classes
 
-When investigating a family of curves it is convenient to write a class for them. This class must inherit from the `Curve` class, and an instance must have the `x`, `y`, `dx`, and `dy` properties. If you do not wish or need to write the `dx` and `dy` functions, call `Curve.__init__(self, x, y)` in your `__init__` to use numerical differentiation.
+When investigating a family of curves it is convenient to write a class for them. This class must inherit from the `Curve` class, and an instance must have the `x`, `y`, `dx`, and `dy` properties. If you do not wish or need to write the `dx` and `dy` functions, call `Curve.__init__(self, x, y)` in your `__init__` to use the default numerical differentiation.
 
 
 ### `colormix.py`
