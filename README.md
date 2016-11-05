@@ -235,11 +235,13 @@ A lissajous curve, a complec harmonic curve where the x and y components are eac
 
 Curves can be defined as sums of `Curve` instances. E.g. an epitrochoid can be defined as the sum of two circular motions. Here is an examples of a cycloid curve being defined as the sum of a linear and a circular motion:
 
-```
-TODO code here
+```Python
+line = curve.Line(1, 0)
+circle = curve.Circle(1, -1, -tau/4)
+c = line + circle
 ```
 
-TODO figure here
+![Cycloid curve](figures/curve_cycloid.png)
 
 #### Define your own Curve classes
 

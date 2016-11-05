@@ -28,7 +28,7 @@
     4. ~~Other modules~~
         * ~~primitive curves~~
         * ~~predefined curves~~
-        * sums of curves
+        * ~~sums of curves~~
         * ~~curves, how to define your own~~
         * ~~colormixer, how it works~~
         * ~~colormixer, predefined options,~~

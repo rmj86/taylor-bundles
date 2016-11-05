@@ -9,6 +9,8 @@ from copy import copy
 import matplotlib
 import matplotlib.pyplot as plt
 
+tau = 2*pi
+
 ####################
 ##  Tangent bundle
 
@@ -142,6 +144,24 @@ def fig9():
     tb.render()
 
 ################################################################################
+## Curve illustration
+
+def curve_cycloid():
+    line = curve.Line(1, 0)
+    circle = curve.Circle(1, -1, -tau/4)
+    c = line + circle
+    tb = copy(tb1)
+    wx = 2*tau
+    wy = wx * 9./32.
+    tb.set_options( curve = c
+                  , filename = "figures/curve_cycloid"
+                  , domain = [0, wx]
+                  , window = [0, wx, -wy, wy]
+                  , n_tan = 0
+                  )
+    tb.render()
+    
+################################################################################
 ### colormix illustrations
 
 def cm_fig_template(norm, normargs, filename):
@@ -221,8 +241,10 @@ if __name__ == "__main__":
     # fig8()
     # fig9()
     
+    curve_cycloid()
+    
     # cm_fig1()
     # cm_fig2()
     # cm_fig3()
     # cm_fig4()
-    cm_fig5()
+    # cm_fig5()
