@@ -190,30 +190,61 @@ TODO
 
 ### `curve.py`
 
-`curve.py` exports the following names:
 
-`Curve(x, y, dx=None, dy=None)`
+`curve.py` exports the following names of interest:
 
-TODO
+###### `Curve(x, y, dx=None, dy=None)`
 
-`fromFunction(f, dx=None)`
+A parametric curve is an instance of the `Curve` class. It has the `taylorCurve` method, which does a Taylor expansion around a given point, and allows us to draw our bundles.
 
-TODO
+The arguments `x(t)` and `y(t)` are the x and y coordinates of the curve, functions of a third independent variable. The argument and return value should both be a numpy `ndarray`.
 
-`Trochoid(R, r, d)`
+The optional arguments `dx(t, n=1)` and `dy(t, n=1)` are the derivatives of `x` and `y` w.r.t. `t`. `n` is the order of the derivative. For drawin the nth order Taylor undle, the derivative funcion must be valid up do order n. Note that `dx(t, 0)` should equal `x(t)`, and somolarly for `dy`.
 
-TODO
+If `dx` and `dy` are not supplied, they default to numerical differentiation (symmetric finite difference method.) The result can often be sufficient for lower order terms, e.g. `n<=3`.
 
-`Lissajous(a, b, A, B, delta)`
+###### `fromFunction(f, df=None)`
 
-TODO
+Returns a Curve instance representing the curve y=f(x).
 
+###### `Point(x0, y0)`
 
-#### Define Your Own Curves
+A parametric point, i.e. a Curve where x(t)=x0 and y(t)=y0 for any t.
 
-A curve must inherit from the `Curve` class. `Curve` has the `taylorCurve(a, n)` method, which returns a Taylor polynomial curve about t=a of degree n. This method is what allows us to draw Taylor bundles. 
+###### `Line(a, b)`
 
-TODO expand on this, with an example of the minimal definition
+A parametric line with run `a` and rise `b`. I.e. x(t)=a*t and y(t)=b*t.
+
+###### `Circle(r, omega=1.0, o=0.0)`
+
+A parametric circle of radius `r`, argular velocity `omega` and rotational offset `o`.
+
+###### `Epitrocohid(R, r, d, o=0.0)`
+
+An [epitrochoid curve](https://en.wikipedia.org/wiki/Epitrochoid), where `R` is the radius of the stationary circle, `r` is the radius of the rolling circle, `d` is the distance of the traced point from the center of the rolling circle, and `o` is the rotational offset of the rolling circle.
+
+###### `Hypotrochoid(R, r, d, o=0.0)`
+
+A [hypotrochoid curve](https://en.wikipedia.org/wiki/Hypotrochoid), where `R` is the radius of the stationary circle, `r` is the radius of the rolling circle, `d` is the distance of the traced point from the center of the rolling circle, and `o` is the rotational offset of the rolling circle.
+
+###### `Lissajous(a, b, A, B, delta)`
+
+A lissajous curve, a complec harmonic curve where the x and y components are each a simple harmonic motion. `a` and `b` are the angular frequency of the x and y component respectively, `A` and `B` are their respective amplitude, and `delta` is the offset in phase between the components.
+
+#### Curves as sums
+
+Curves can be defined as sums of `Curve` instances. E.g. an epitrochoid can be defined as the sum of two circular motions. Here is an examples of a cycloid curve being defined as the sum of a linear and a circular motion:
+
+```
+TODO code here
+```
+
+TODO figure here
+
+#### Define your own Curve classes
+
+When investigating a family of curves it is convenient to write a class for them. This class must inherit from the `Curve` class, and an instance must have the `x`, `y`, `dx`, and `dy` properties. If you do not wish or need to write the `dx` and `dy` functions, call `Curve.__init__(self, x, y)` in your `__init__` to use numerical differentiation.
+
 
 ### `colormix.py`
 
