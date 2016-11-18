@@ -22,7 +22,7 @@ import copy
 
 tau = 2 * numpy.pi
 
-class TaylorBundle:
+class TaylorBundle(object):
     __opts = { "curve", "n_part", "n_tan", "degree"
              , "domain", "curvedomain", "bundledomain"
              , "figsize", "dpi", "window", "facecolor"
@@ -57,12 +57,14 @@ class TaylorBundle:
         self.set_options(**options)
     def set_options(self, **options):
         for o,v in options.items():
-            if o not in self.__opts:
-                print "WARNING: Unknown option {}".format(o)
-            if o == "domain":
-                setattr(self, "curvedomain", v)
-                setattr(self, "bundledomain", v)
             setattr(self, o, v)
+    def __setattr__(self, attr, value):
+        if not hasattr(self, attr):
+            raise AttributeError('TaylorBundle has no attribute "{}"'.format(attr))
+        if attr == "domain":
+            self.curvedomain  = value
+            self.bundledomain = value
+        object.__setattr__(self, attr, value)
     def initializeFigure(self, figsize):
         """ initialize the plotting surface """
         fig = pyplot.gcf()

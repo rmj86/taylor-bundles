@@ -2,6 +2,7 @@ import traceback
 import sys
 
 import taylorbundle as tb
+import taylorbundle
 import curve
 import colormix
 from colormix import normalize, smoothstep, cosine, gaussian
@@ -603,6 +604,68 @@ def cm_oob_wideViridisBand():
 
 # TODO: what happens when n_parts is 0?
 
+###############################################################################
+## TB option setter
+
+# setting options at init
+def t_TaylorBundle_optionSetter_1():
+    tb = taylorbundle.TaylorBundle(n_tan = 12345, n_part = 77)
+    b = tb.n_tan == 12345 and tb.n_part == 77
+    return b
+# setting options with method set_options
+def t_TaylorBundle_optionSetter_2():
+    tb = taylorbundle.TaylorBundle()
+    tb.set_options(n_tan = 12345, n_part = 77)
+    b = tb.n_tan == 12345 and tb.n_part == 77
+    return b
+# setting options with direct attr access
+def t_TaylorBundle_optionSetter_3():
+    tb = taylorbundle.TaylorBundle()
+    tb.n_tan = 12345
+    tb.n_part = 77
+    b = tb.n_tan == 12345 and tb.n_part == 77
+    return b
+# setting 'domain' in init
+def t_TaylorBundle_optionSetter_4():
+    tb = taylorbundle.TaylorBundle(domain = [2,77])
+    b = tb.bundledomain == [2,77] and tb.curvedomain == [2,77]
+    return b
+# setting 'domain' with set_options
+def t_TaylorBundle_optionSetter_5():
+    tb = taylorbundle.TaylorBundle()
+    tb.set_options(domain = [2,77])
+    b = tb.bundledomain == [2,77] and tb.curvedomain == [2,77]
+    return b
+# setting 'domain' with direct attr access
+def t_TaylorBundle_optionSetter_6():
+    tb = taylorbundle.TaylorBundle()
+    tb.domain = [2,77]
+    b = tb.bundledomain == [2,77] and tb.curvedomain == [2,77]
+    return b
+# can not set an arbitrary attribute - only attributes the object already has
+# at init
+def t_TaylorBundle_optionSetter_7():
+    try:
+        tb = taylorbundle.TaylorBundle(hotDogsWithKetchup = "every single day")
+    except AttributeError:
+        return True
+    return False
+# can not set arbitrary attributes - with set_options
+def t_TaylorBundle_optionSetter_8():
+    tb = taylorbundle.TaylorBundle()
+    try:
+        tb.set_options( hotDogsWithKetchup = "every single day" )
+    except AttributeError:
+        return True
+    return False
+# can not set arbitrary attributes - with direct access
+def t_TaylorBundle_optionSetter_9():
+    tb = taylorbundle.TaylorBundle()
+    try:
+        tb.hotDogsWithKetchup = "every single day"
+    except AttributeError:
+        return True
+    return False
 
 ###############################################################################
 ## test running infrastructure
@@ -698,6 +761,20 @@ def tb_render_tests(v=3):
            , v = v
            )
 
+def tb_tests(v=3):
+    testAll( [ t_TaylorBundle_optionSetter_1
+             , t_TaylorBundle_optionSetter_2
+             , t_TaylorBundle_optionSetter_3
+             , t_TaylorBundle_optionSetter_4
+             , t_TaylorBundle_optionSetter_5
+             , t_TaylorBundle_optionSetter_6
+             , t_TaylorBundle_optionSetter_7
+             , t_TaylorBundle_optionSetter_8
+             , t_TaylorBundle_optionSetter_9
+             ]
+           , v = v
+           )
+
 if __name__ == "__main__":
     v = 3
     if len(sys.argv) >= 2:
@@ -717,6 +794,7 @@ if __name__ == "__main__":
         else:
             v = n
 
+    tb_tests(v=v)
     cm_tests(v=v)
     misc_tests(v=v)
     cm_render_tests(v=v)
