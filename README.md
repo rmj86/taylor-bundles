@@ -121,19 +121,11 @@ The following sections have complete information on `TayloBundle`'s options, on 
 
 `taylorbundle` exports two names. First, the class `TaylorBundle` which specifies and renders a Taylor bundle. Second, the circle constant `tau`, because numpy only exports `pi`, and who would want to use that?
 
-The options for a `TaylorBundle` can be set in three ways.
-
-1. Give them as an argument at object creation, e.g. `tb = TaylorBundle(option=value, ...)`.
-2. Set them via the `set_options` method. E.g. `tb.set_options(option=value, ...)`
-3. Modify the objet property directly, e.g. `tb.option = value`
-
-The third method is not recommended. Methods 1 and 2 will print a warning if you're trying to set an option that doesn't exist. Method 3 does not have this helpful debugging feature.
+The options for a `TaylorBundle` can be set in three ways. Either give them as arguments at object creation, e.g. `tb = TaylorBundle(option=value, ...)`, or set them with the `set_options` method. E.g. `tb.set_options(option=value, ...)`, or manipulate the objet property directly, e.g. `tb.option = value`
 
 #### TaylorBundle Options
 
-The options fall in 4 general categories.
-
-TODO more verbose descriptions
+The options fall in 3 broad categories. First the specification of the mathematical object as such. Then technical details about how to render it, in 3 sub-categories. Finally options for the file output.
 
 ###### Mathematical specification of the bundle
 
@@ -143,7 +135,7 @@ curve        | None          | The generating curve for the bundle.
 degree       | 1             | The degree of the Taylor polynomials.
 bundledomain | (0, tau)      | The domain to render tangent polynomals in.
 curvedomain  | (0, tau)      | The domain to show `curve` in.
-domain       | (0, tau)      | The domain of both the curve and tangent space. Setting this option (with the setter) overwrites the values of `curvedomain` and `bundledomain`.
+domain       | (0, tau)      | The domain of both the curve and tangent space. Setting this overwrites the values of the two domain options above.
 
 ###### Rendering of the generating curve
 
@@ -152,7 +144,7 @@ Option | Default Value | Description
 showcurve  | True |  If `True`, Show the generating curve on top of the tangent bundle.
 curveres   | 256  |  Resolution of generating curve
 curvecol   | "w"  |  Colour of generating curve. For a list of valid color values, see the section on `colormix.py`
-curvelw    | 2    |  Line width of generating curve, in points. This is relative to `figsize`, not resolution. There are 72 points in an inch
+curvelw    | 2    |  Line width of generating curve, in points. Note this is relative to `figsize`, not resolution. (72 points to an inch)
 curvealpha | None |  Transparency of generating curve. Should be a number between 0.0 (invisible) and 1.0 (opaque). If it is `None` alpha is determined by the `curvecol` argument and can be variable.
 
 ###### Rendering of the Taylor curves
@@ -160,23 +152,23 @@ curvealpha | None |  Transparency of generating curve. Should be a number betwee
 Option | Default Value | Description
 -------|---------------|------------
 n_tan     | 200    | Number of tangents per image render.
-tandomain | [-2,2] | Domain of tangent lines (extension of parameter around the point of tangency.)
-tanres    | 256    | resolution of tangent curves
-tanlw     | 0.2    | line width of tangents
-tanalpha  | None   | tranparency of tangents
-tancol    | "r"    | colour of tangents. Can be constant or generating function
+tandomain | [-2,2] | Domain of tangent lines, where the point of tangency is 0.
+tanres    | 256    | Resolution of tangent curves.
+tanlw     | 0.2    | Line width of tangents, in points. Note this is relative to `figsize`, not resolution. (72 points to an inch)
+tancol    | "r"    | Colour of tangents. For a list of valid color values, see the section on `colormix.py`
+tanalpha  | None   | Tranparency of tangents. Should be a number between 0.0 (invisible) and 1.0 (opaque). If it is `None` alpha is determined by the `tancol` argument and can be variable.
 
 ###### Rendering of the image
 
 Option | Default Value | Description
 -------|---------------|------------
-n_part    | 1             | Number of partial images to render. Drawing tens of thousands of lines to a single frame can cause memory problems. With this setting >1 the rendering is split up over multiple images which are finally combined.
-facecolor | 'k'           | Background colour of plotting surface
+n_part    | 1             | Number of partial images to render. When drawing tens of thousands of lines to a single frame memory can be an issue. With this setting >1 the rendering is split up over multiple images which are averaged together.
+facecolor | 'k'           | Background colour of plotting surface.
 window    | [-16,16,-9,9] | Bounds of the plotting coordinate system (xmin, xmax, ymin, ymax).
 figsize   | (16,9)        | Size of image (width, height) in inches.
-dpi       | 120           | Resolution of image (dots per inch).
+dpi       | 120           | Resolution of image (dots per inch). The resolution of the rendered image is dpi*figsize.
 
-Other
+###### Files
 
 Option | Default Value | Description
 -------|---------------|------------
