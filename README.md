@@ -80,6 +80,15 @@ The bundle looks as such:
 
 ![Figure 9](figures/readme_fig9.png)
 
+## Examples
+
+Here are some example renders.
+
+![Examples Star](renders/example_star.png)
+![Examples Asteroid](renders/example_asteroid_exactdiff.png)
+![Examples Lissajous](renders/example_lissajous.png)
+
+
 
 ## Installation
 
