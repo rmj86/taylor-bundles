@@ -26,6 +26,20 @@ def t_numDiff_sin5():
     return verySmall(v-expected,  1e-8)
 
 ################################################################################
+# pascal tests
+def t_pascal_0():
+    a = c.pascal(0)
+    a_ = [[1]]
+    return np.all(a == a_)
+def t_pascal_3():
+    a = c.pascal(3)
+    a_ = [[1,1,1,1],
+          [1,2,3,0],
+          [1,3,0,0],
+          [1,0,0,0]]
+    return np.all(a == a_)
+
+################################################################################
 # taylorPoly tests
 def t_taylorPoly_cos():
     p = c.taylorPoly(np.cos, 0, n=2)

@@ -1,9 +1,44 @@
 # -*- coding: utf-8 -*-
 
 import numpy
-from numpy import sin, cos
+from numpy import sin, cos, zeros, ones, newaxis
 from numpy.polynomial import Polynomial
 from math import factorial
+
+
+################################################################################
+## Taylor Polynomials
+
+def pascal(n, memo={0: numpy.array([[1]])}):
+    """ rows of binomial coefficients, (n+1) square array, with the
+        rows on the rising diagonals. """
+    if n in memo:
+        return memo[n]
+    prev = pascal(n-1)
+    this = zeros((n+1,n+1))
+    this[:-1, :-1] = prev
+    prev_diag = numpy.diagonal(prev[:,::-1])
+    this_diag = ones((n+1))
+    this_diag[1:-1] = prev_diag[:-1] + prev_diag[1:]
+    numpy.fill_diagonal(this[:,::-1], this_diag)
+    memo[n] = this
+    return this
+
+def taylorPoly(f, a, n=1, df=None):
+    """ Degree n Taylor polynomial of f(x) around the point x=a. """
+    if df is None:
+        df = lambda a, n: numDiff(f, a, n)
+    fprime = zeros(((n+1),(n+1)))
+    for i in range(n+1):
+        value = df(a, i) / factorial(i)
+        for j in range(i+1):
+            x, y = i-j, j
+            fprime[x,y] = value
+    pasc = pascal(n)
+    alpha = (-a)**numpy.arange(n+1)
+    terms = alpha[newaxis,:] * pasc * fprime
+    coeff = numpy.sum(terms, axis=1)
+    return Polynomial(coeff)
 
 ################################################################################
 ## Calculus helper functions
@@ -18,20 +53,9 @@ def numDiff(f, a, n=1, h=0.02):
     derivative = difference / (h**n)
     return derivative[0]
 
-def taylorPoly(f, a, n=1, df=None):
-    """ Degree n Taylor polynomial of f(x) around the point x=a. """
-    if df is None:
-        df = lambda a, n: numDiff(f, a, n)
-    p = Polynomial([0])
-    for i in range(n+1):
-        q = Polynomial([-a,1])
-        q.maxpower = i
-        p = p + q**i * df(a,i) / factorial(i)
-    return p
-
 sinprime_memo = [sin, cos, lambda x: -sin(x), lambda x: -cos(x)]
 def sinprime(n):
-    """ nth derivative os sin(x). """
+    """ nth derivative of sin(x). """
     return sinprime_memo[n%4]
 
 cosprime_memo = [cos, lambda x: -sin(x), lambda x: -cos(x), sin]
