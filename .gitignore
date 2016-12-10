@@ -6,6 +6,9 @@
 !figures/*.png
 !renders/*.png
 
+# profiling data
+**/*.prof
 
 # Windows shortcuts
 *.lnk
+*.bat
