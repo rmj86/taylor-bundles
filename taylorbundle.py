@@ -88,25 +88,30 @@ class TaylorBundle(object):
         # color array
         cmix = colormix.fromConstant(self.tancol)
         colors = cmix(t)
-        # plot the tangents on current axis
+        # calculate taylor curves' coordinates
+        taylorcoords = numpy.ndarray((n_tan, self.tanres, 2))
         (amin, amax) = self.tandomain
-        for a, c in zip(t, colors):
-            p = self.curve.taylorCurve(a, self.degree)
+        for i, a in enumerate(t):
             s = numpy.linspace(a+amin, a+amax, self.tanres)
-            ax.plot( p.x(s), p.y(s), color=c, zorder=0
-                       , linewidth=self.tanlw, alpha=self.tanalpha )
+            p = self.curve.taylorCurve(a, self.degree)
+            taylorcoords[i,:,0] = p.x(s)
+            taylorcoords[i,:,1] = p.y(s)
+        # taylor curve collection
+        taylorcurves = LineCollection( taylorcoords
+                                     , colors = colors
+                                     , lw = self.tanlw
+                                     , alpha = self.tanalpha
+                                     , zorder = 0 )
+        # add collection to current axes
+        ax.add_collection(taylorcurves)
 
     def drawCurve(self, ax):
-        # print "drawing"
-        # return
-        # print repr(self._drawCurve_constcolor)
         if type(self.curvecol) == types.FunctionType:
             self._drawCurve_varColor(ax)
         else:
             self._drawCurve_constColor(ax)
 
     def _drawCurve_constColor(self, ax):
-        # pass
         tmin, tmax = self.curvedomain
         t = numpy.linspace(tmin, tmax, self.curveres)
         ax.plot(
