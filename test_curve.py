@@ -1,8 +1,14 @@
 
 import curve as c
 import numpy as np
+from numpy.polynomial.polynomial import polyval
 from tests import testAll
 tau = 2 * np.pi
+
+#TESTS TODO :
+# taylorPolyValues
+# taylorBundlePoints
+
 
 ################################################################################
 ## Utility functions
@@ -12,17 +18,68 @@ def verySmall(a, delta=1e-30):
     # can't be guaranteed due to floating errors.
     return np.average(a*a) <= delta
 
+################################################################################
+## polyval_expression, numexpr_polyval  tests
 
+def t_polyval_expression():
+    b0 = c.polyval_expression(0)  ==  "c0"
+    b1 = c.polyval_expression(1)  ==  "c0+x*(c1)"
+    b2 = c.polyval_expression(2)  ==  "c0+x*(c1+x*(c2))"
+    b3 = c.polyval_expression(3)  ==  "c0+x*(c1+x*(c2+x*(c3)))"
+    return b0 and b1 and b2 and b3
+def t_numexpr_polyval_1():
+    p = np.array([1.0, 2.0, 3.0])
+    x = np.linspace(0,3,7)
+    v = c.numexpr_polyval(x, p)
+    expected = polyval(x, p, tensor= False)
+    return verySmall(v-expected, delta = 1e-30)
+def t_numexpr_polyval_2():
+    p = np.linspace(1,5,12)
+    p.shape = (3,4)
+    x = np.linspace(0,3,4)
+    v = c.numexpr_polyval(x, p)
+    expected = polyval(x, p, tensor= False)
+    return verySmall(v-expected, delta = 1e-30)
+def t_numexpr_polyval_3():
+    p = np.linspace(1,5,24)
+    p.shape = (3,4,2)
+    x = np.linspace(0,3,4)
+    x.shape = (4,1)
+    v = c.numexpr_polyval(x, p)
+    expected = polyval(x, p, tensor= False)
+    return verySmall(v-expected, delta = 1e-30)
 
 ################################################################################
 # numDiff tests
-def t_numDiff_sin():
+def t_numDiff_sin_n1():
     v = c.numDiff(np.sin, np.pi, 1)
     expected = -1
     return verySmall(v-expected,  1e-8)
-def t_numDiff_sin5():
-    v = c.numDiff(np.sin, np.pi, 1)
+def t_numDiff_sin_n5():
+    v = c.numDiff(np.sin, np.pi, 5)
     expected = -1
+    return verySmall(v-expected,  1e-8)
+def t_numDiff_array_n1():
+    x = np.arange(7, dtype=np.float64)
+    v = c.numDiff(np.sin, x, n=1)
+    expected = np.cos(x)
+    return verySmall(v-expected,  1e-8)
+def t_numDiff_array_n3():
+    x = np.arange(7, dtype=np.float64)
+    v = c.numDiff(np.sin, x, n=3)
+    expected = -np.cos(x)
+    return verySmall(v-expected,  1e-8)
+def t_numDiff_array2d():
+    x = np.arange(4, dtype=np.float64)
+    x.shape = (2,2)
+    v = c.numDiff(np.sin, x)
+    expected = np.cos(x)
+    return verySmall(v-expected,  1e-8)
+def t_numDiff_array2d_n2():
+    x = np.arange(20, dtype=np.float64)
+    x.shape = (4,5)
+    v = c.numDiff(np.sin, x, n=2)
+    expected = -np.sin(x)
     return verySmall(v-expected,  1e-8)
 
 ################################################################################
