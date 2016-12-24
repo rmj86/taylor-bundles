@@ -89,13 +89,9 @@ class TaylorBundle(object):
         cmix = colormix.fromConstant(self.tancol)
         colors = cmix(t)
         # calculate taylor curves' coordinates
-        taylorcoords = numpy.ndarray((n_tan, self.tanres, 2))
         (amin, amax) = self.tandomain
-        for i, a in enumerate(t):
-            s = numpy.linspace(a+amin, a+amax, self.tanres)
-            p = self.curve.taylorCurve(a, self.degree)
-            taylorcoords[i,:,0] = p.x(s)
-            taylorcoords[i,:,1] = p.y(s)
+        p = numpy.linspace(amin, amax, self.tanres)
+        taylorcoords = curve.taylorBundlePoints(self.curve, t, p, self.degree)
         # taylor curve collection
         taylorcurves = LineCollection( taylorcoords
                                      , colors = colors

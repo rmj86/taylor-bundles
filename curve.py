@@ -1,17 +1,99 @@
 # -*- coding: utf-8 -*-
 
 import numpy
-from numpy import sin, cos, zeros, ones, newaxis
+from numpy import sin, cos, zeros, ones, array, ndarray, newaxis, concatenate, linspace
 from numpy.polynomial import Polynomial
+from numpy.polynomial.polynomial import polyval
 from math import factorial
+import numexpr
 
 
 ################################################################################
 ## Taylor Polynomials
 
+def polyval_expression(n, memo={}):
+    """
+    expression for evaluation of an nth degree polynomial, to be run
+    by numexpr.evaluate.
+    E.g. polyval_expression(2)  ->  "c0 + x*(c1 + x*(c2))"
+    """
+    if n in memo:
+        return memo[n]
+    expr = "c{}".format(n)
+    for i in reversed( range( n )):
+        expr = "c{}+x*({})".format(i, expr)
+    memo[n] = expr
+    return expr
+
+def numexpr_polyval(x, p):
+    """
+    equivalent no numpy.polynomial.polyval(x, p, tensor=False)
+    but faster (for large x,p).
+    Breaks when the degree of p > 29
+    """
+    d = p.shape[0]
+    if d > 29:  # numexpr breaks because of internal numpy limitations
+        value = polyval(x, p, tensor = False)
+    else:
+        consts = {"c{}".format(i) : a for i,a in enumerate(p)}
+        consts["x"] = x
+        expr = polyval_expression(d-1)
+        value = numexpr.evaluate(expr, local_dict = consts)
+    return value
+    
+def taylorPolyValues(df, a, x, degree):
+    """
+    Taylor polynomial values of f around (x-a).
+    a has shape (n,)  and x has shape (r,)
+    Returns an ndarray (n,r), where the first index is a polynomial
+    curve and the second index is the values on that curve.
+    """
+    d = degree+1
+    # shapes:  polys  (d, n)
+    #          a      (n,)
+    polys = ndarray((d,) + a.shape)
+    for i in range(d):
+        polys[i] = df(a, i) / factorial(i)
+    # broadcasting    x          (_, r)
+    #                 polys   (d, n, _)
+    #                 -> out     (n, r)
+    y = numexpr_polyval(x[newaxis,:], polys[:,:,newaxis])
+    return y
+    
+    
+def taylorBundlePoints(curve, a, p, degree):
+    """
+    Points on the Taylor Curves to curve at points a.
+    Inputs:
+        curve   an instance of Curve
+                the generating curve
+        a       an ndarray of shape (n,)
+                the parameter points on the curve for which to evaluate
+                the taylor polys
+        p       ndarray of shape (r,)
+                the parameter values for whoich to evaluate points on the
+                taylor poly (around the point of angency)
+        degree  int
+                the degree/order of the taylor polys
+    output:
+        polypts ndarray of shape (n,r,2)
+                where the first index represents a polynomial curve
+                      the second index points on that curve
+                      the third index the x/y components of that point
+    """
+    x = taylorPolyValues(curve.dx, a, p, degree)
+    y = taylorPolyValues(curve.dy, a, p, degree)
+    polypts = concatenate((x[...,newaxis], y[...,newaxis]), axis=-1)
+    return polypts
+
+###############################
+
 def pascal(n, memo={0: numpy.array([[1]])}):
     """ rows of binomial coefficients, (n+1) square array, with the
-        rows on the rising diagonals. """
+        rows on the rising diagonals. e.g.
+        [[ 1 1 1 ] 
+         [ 1 2 0 ] 
+         [ 1 0 0 ]] """
     if n in memo:
         return memo[n]
     prev = pascal(n-1)
@@ -39,6 +121,7 @@ def taylorPoly(f, a, n=1, df=None):
     terms = alpha[newaxis,:] * pasc * fprime
     coeff = numpy.sum(terms, axis=1)
     return Polynomial(coeff)
+    
 
 ################################################################################
 ## Calculus helper functions
@@ -46,12 +129,13 @@ def taylorPoly(f, a, n=1, df=None):
 def numDiff(f, a, n=1, h=0.02):
     """ Numeric nth derivative of function f at point x=a, using symmetric
         finite difference method with point sampling distance h. """
-    i = numpy.linspace(-n, n, n+1)
-    x = a + (h/2.0)*i
-    y = f(x)
-    difference = numpy.diff(y, n)
+    delta_x = linspace(-n,n,n+1) * (h/2.0)
+    if type(a) != ndarray: xs = a + delta_x  # assume a is scalar (float/int)
+    else:                  xs = a[...,newaxis] + delta_x
+    ys = f(xs)
+    difference = numpy.diff(ys, n, axis=-1)
     derivative = difference / (h**n)
-    return derivative[0]
+    return derivative[...,0]  # get rid of the diffed axis
 
 sinprime_memo = [sin, cos, lambda x: -sin(x), lambda x: -cos(x)]
 def sinprime(n):
