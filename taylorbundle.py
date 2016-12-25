@@ -99,7 +99,7 @@ class TaylorBundle(object):
                                      , alpha = self.tanalpha
                                      , zorder = 0 )
         # add collection to current axes
-        ax.add_collection(taylorcurves)
+        ax.add_collection(taylorcurves, autolim=False)
 
     def drawCurve(self, ax):
         if type(self.curvecol) == types.FunctionType:
