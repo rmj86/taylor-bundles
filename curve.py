@@ -71,8 +71,8 @@ def taylorBundlePoints(curve, a, p, degree):
                 the parameter points on the curve for which to evaluate
                 the taylor polys
         p       ndarray of shape (r,)
-                the parameter values for whoich to evaluate points on the
-                taylor poly (around the point of angency)
+                the parameter values for which to evaluate points on the
+                taylor poly (around the point of tangency)
         degree  int
                 the degree/order of the taylor polys
     output:
