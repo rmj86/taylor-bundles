@@ -164,21 +164,26 @@ class TaylorBundle(object):
         if n_tan == 0: dt = 1
         else: dt = float(tmax-tmin)/n_tan
         ds = numpy.linspace(0, dt, n_part, False)
-        partial_filenames = []
+        # names of rendered files
+        if n_part == 1:
+            partial_filenames = [filename + ".png"]
+        else:
+            partial_filenames = ["{}_partial{}.png".format(filename, i)
+                                 for i in range(n_part)]
+        # add curves to axes and render png
         for i, d in enumerate(ds):
             clearAxes(ax)
             self.drawTangents(ax, tmin+d, tmax+d, n_tan)
-            # plot the curve
             if self.showcurve:
                 self.drawCurve(ax)
-            pfname = "{}_partial{}.png".format(filename, i)
-            fig.savefig(pfname, dpi = self.dpi, facecolor = self.facecolor)
-            partial_filenames.append(pfname)
+            fig.savefig( partial_filenames[i]
+                       , dpi = self.dpi, facecolor = self.facecolor)
         # compose partials and delete partial files
-        image.composeAverage(filename+".png", partial_filenames)
-        if not self.keep_partials:
-            for fn in partial_filenames:
-                misc.deleteFile(fn)
+        if n_part > 1:
+            image.composeAverage(filename+".png", partial_filenames)
+            if not self.keep_partials:
+                for fn in partial_filenames:
+                    misc.deleteFile(fn)
 
     def renderTancolorLegend(self):
         tb = copy.copy(self)
