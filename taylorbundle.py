@@ -30,6 +30,9 @@ class TaylorBundle(object):
              , "curvealpha", "tandomain", "tanres", "tancol"
              , "tanlw", "tanalpha", "filename", "keep_partials"
              }
+    __axes_properties = { "figsize", "dpi", "window", "facecolor" }
+    __update_axes = True
+    
     curve = None
     n_part = 1               # number of partial images to render
     n_tan = 200              # number of tangents per partial image
@@ -61,25 +64,27 @@ class TaylorBundle(object):
     def __setattr__(self, attr, value):
         if not hasattr(self, attr):
             raise AttributeError('TaylorBundle has no attribute "{}"'.format(attr))
+        if attr in self.__axes_properties:
+            self.__update_axes = True
         if attr == "domain":
             self.curvedomain  = value
             self.bundledomain = value
         object.__setattr__(self, attr, value)
-    def initializeFigure(self, figsize):
-        """ initialize the plotting surface """
+
+    def getFigAx(self, figsize):
+        """ Set up and return the the plotting figure / axes """
         fig = pyplot.gcf()
-        fig.set_size_inches(*figsize)
-        fig.set_dpi(self.dpi)
         ax = pyplot.gca()
-        ax.set_position([0,0,1,1])
-        return fig
-    def initializeAxes(self):
-        """ clear and set properties of current axes """
-        ax = pyplot.gca()
-        ax.clear()
-        ax.axis(self.window)
-        ax.axis("off")
-        return ax
+        if self.__update_axes:
+            fig.set_size_inches(*figsize)
+            fig.set_dpi(self.dpi)
+            ax.set_position([0,0,1,1])
+            ax.clear()
+            ax.axis(self.window)
+            ax.axis("off")
+            self.__update_axes = False
+        return fig, ax
+    
     # @timed(showargs=False)
     def drawTangents(self, ax, tmin, tmax, n_tan):
         # function paramter values
@@ -134,7 +139,6 @@ class TaylorBundle(object):
                                  , lw = self.curvelw
                                  , alpha = self.curvealpha
                                  , zorder = 1 )
-        ax = pyplot.gca()
         ax.add_collection(segments)
 
     @misc.timed(False)
@@ -153,7 +157,7 @@ class TaylorBundle(object):
             filename = "{}_preview{}".format(filename, scale)
 
         # set up the ploting surface
-        fig = self.initializeFigure(figsize)
+        fig, ax = self.getFigAx(figsize)
         # render partials
         # --------
         # div by zero quick fix: set dt to an arbitrary value if zero n_tan
@@ -162,7 +166,7 @@ class TaylorBundle(object):
         ds = numpy.linspace(0, dt, n_part, False)
         partial_filenames = []
         for i, d in enumerate(ds):
-            ax = self.initializeAxes()  # clear the current axes
+            clearAxes(ax)
             self.drawTangents(ax, tmin+d, tmax+d, n_tan)
             # plot the curve
             if self.showcurve:
@@ -187,3 +191,15 @@ class TaylorBundle(object):
         else:
             tb.set_options( filename = misc.datetimeFilename("taylorbundle_tancolorLegend_") )
         tb.render()
+
+def clearAxes(ax):   # a subset of the ax.cla() method
+    ax.lines = []    # lifted from matplotlib/axes/_base.py
+    ax.patches = []  # should be sufficient for many purposes
+    ax.texts = []    # and be significantly more performant
+    ax.tables = []
+    ax.artists = []
+    ax.images = []
+    ax._current_image = None
+    ax.legend_ = None
+    ax.collections = []
+    ax.containers = []
